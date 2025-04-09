@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .input {
+      @apply w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition;
+    }
+  
+    .file-input {
+      @apply w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-md cursor-pointer text-gray-700;
+    }
+  
+    .section-title {
+      @apply text-xl font-semibold text-gray-800 mb-3;
+    }
+  
+    .form-container {
+      @apply bg-white p-8 rounded-2xl shadow-xl border border-gray-200;
+    }
+  
+    .btn-primary {
+      @apply w-full bg-indigo-600 hover:bg-indigo-700 transition text-white font-medium py-2 rounded-lg;
+    }
+  
+    .btn-secondary {
+      @apply w-full bg-green-600 hover:bg-green-700 transition text-white font-medium py-2 rounded-lg;
+    }
+  }
+  
