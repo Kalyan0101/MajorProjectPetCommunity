@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
             required: [true, "password required"],
         },
         avatar: {
-            type: String,
+            type: Object,
         },
         location: {
             type: String,

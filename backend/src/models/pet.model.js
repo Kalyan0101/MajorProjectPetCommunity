@@ -13,7 +13,7 @@ const petSchema = new mongoose.Schema({
         trim: true
     },
     avatar: {
-        type: String
+        type: Object
     },
     YOB: {
         type: Number,
