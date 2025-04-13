@@ -1,8 +1,8 @@
 import React from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import Body from '../components/Body';
-import SignupFormFull from '../components/SignupFormFull';
+import Header from '../components/shared/Header';
+import Footer from '../components/shared/Footer';
+import Body from '../components/shared/Body';
+import SignupFormFull from '../components/auth/SignupFormFull';
 
 const Signup = () => {
   return (
