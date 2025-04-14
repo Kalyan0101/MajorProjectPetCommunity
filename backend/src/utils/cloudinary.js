@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
-import { ApiError } from "./ApiError";
+import { ApiError } from "./ApiError.js";
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -8,24 +8,25 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadOnCloudinary = async (localFilePath) => {
+const uploadOnCloudinary = async (localFilePath, filePath = "user") => {    
     try {
-        if (!localFilePath)
-            throw new ApiError(400, "Error: local file path required!!!");
+        if (!localFilePath) return null;
 
-        const response = await cloudinary.uploader.upload(
-            `petCommunity/${localFilePath}`,
-            {
+        const response = await cloudinary.uploader.upload(localFilePath, {
                 resource_type: "auto",
+                folder: `petCommunity/${filePath}`
             }
         );
 
         if (!response.url)
-            throw new ApiError(400, "Error: while uploading the file!!!");
+            throw new ApiError(500, "while uploading the file!!!");
 
         console.log("File uploaded successfully.");
         return response;
+
     } catch (error) {
+        console.log(error);
+        
         return null;
     } finally {
         fs.unlinkSync(localFilePath);

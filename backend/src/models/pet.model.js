@@ -15,7 +15,7 @@ const petSchema = new mongoose.Schema({
     avatar: {
         type: Object
     },
-    YOB: {
+    yob: {
         type: Number,
         requied: true
     },
