@@ -5,6 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { createPet } from "./pet.controller.js";
+import jwt from "jsonwebtoken";
 
 const generateAccessRefreshTokens = async (userId) => {
     try {
@@ -178,9 +179,9 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     if(!isAuthorised) throw new ApiError(400, "Unauthorised Access!!!");
 
     const updatesField = {};
-    if(req.body.fullName) updatesField.fillName = req.body.fullName;
+    if(req.body.fullName) updatesField.fullName = req.body.fullName;
     if(req.body.location) updatesField.location = req.body.location;
-    if(req.body.role) updatesField.role = req.body.role;
+    if(req.body.role) updatesField.role = req.body.role;    
 
     const user = await User.findByIdAndUpdate(
         req.user?._id,
@@ -198,43 +199,51 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
+    try {
+        const isAuthorised = req.user;
+        if(!isAuthorised) throw new ApiError(400, "Unauthorised request!!!");
+
+        const newAvatarLocalPath = req.file?.path || "";
+        if(!newAvatarLocalPath) throw new ApiError(400, "Avatar file required!!!");
     
-    const newAvatarLocalPath = req.file?.avatar[0]?.path;
-    if(!newAvatar) throw new ApiError(400, "Avatar file required!!!");
+        const oldUser = await User.findById(req.user._id);
+        if(!oldUser) throw new ApiError(400, "User does not exists!!!");
+    
+        const newAvatar = await uploadOnCloudinary(newAvatarLocalPath);
+        if(!newAvatar) throw new ApiError(500, "Facing error while uploading the avatar file!!!");
+    
+        const oldAvatarDeleted = await deleteFromCloudinary(oldUser.avatar.public_id);        
 
-    const oldAvatarPublicId = req?.user.avatar.public_id || "";
-
-    const newAvatar = await uploadOnCloudinary(newAvatarLocalPath);
-    if(!newAvatar) throw new ApiError(500, "Facing error while uploading the avatar file!!!");
-
-    const oldAvatarDeleted = await deleteFromCloudinary(oldAvatarPublicId);
-    if(!oldAvatarDeleted){
-        await deleteFromCloudinary(newAvatar?.public_id);
-        throw new ApiError(500, "Facing defficulties while deleting the old file!!!");
-    }
-
-    const modifiedNewAvatar = {
-        url: newAvatar.url,
-        public_id: newAvatar.public_id
-    }
-
-    const user = await User.findByIdAndUpdate(
-        req.user.avatar.public_id,
-        {
-            $set: {
-                avatar: modifiedNewAvatar
-            }
-        },
-        {
-            new: true
+        if(!oldAvatarDeleted){
+            await deleteFromCloudinary(newAvatar?.public_id);
+            throw new ApiError(500, "Facing defficulties while deleting the old file!!!");
         }
-    );
-
-    return res.status(200).json(new ApiResponse(
-        200,
-        user,
-        "User avatar updated Successfully."
-    ));
+    
+        const modifiedNewAvatar = {
+            url: newAvatar.url,
+            public_id: newAvatar.public_id
+        }
+    
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $set: {
+                    avatar: modifiedNewAvatar
+                }
+            },
+            {
+                new: true
+            }
+        );
+    
+        return res.status(200).json(new ApiResponse(
+            200,
+            user,
+            "User avatar updated Successfully."
+        ));
+    } catch (error) {
+        throw new ApiError(400, error.message || "update avatar error!!!");
+    }
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
@@ -242,7 +251,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     const isAuthorised = req?.user;
     if(!isAuthorised) throw new ApiError(400, "Unauthorised Access!!! OR User not login!!!");
 
-    const user = await User.findById(req._id).select("-password");
+    const user = await User.findById(req.user._id).select("-password");
 
     return res.status(200).json(new ApiResponse(
         200,
@@ -253,11 +262,11 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
 
-    const incomingRefreshToken = req.cookie.refreshToken || req.body.refreshToken;
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
     if(!incomingRefreshToken) throw new ApiError(400, "Unauthorised request!!!");
 
     try {
-        const decodedToken = JsonWebTokenError.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
         console.log(decodedToken);
         if(!decodedToken) throw new ApiError(400, "Invalid refresh Token!!!");
     
@@ -275,7 +284,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         const userToReturn = user?.toObject();
         delete userToReturn?.password;
         delete userToReturn?.refreshToken;
-        Object.apply.freeze(userToReturn);
+        Object.freeze(userToReturn);
     
         return res
         .status(200)
