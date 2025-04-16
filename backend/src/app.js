@@ -29,9 +29,11 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // import routers
-import userRouter from "./routes/user.router.js";
+import userRouter from "./routes/user.route.js";
+import petRouter from "./routes/pet.route.js"
 
 // route declaration
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/pet", petRouter);
 
 export { app }

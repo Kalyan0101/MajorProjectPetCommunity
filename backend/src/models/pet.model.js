@@ -3,13 +3,13 @@ import mongoose from "mongoose";
 const petSchema = new mongoose.Schema({
     name: {
         type: String,
-        requied: true,
+        required: true,
         index: true,
         trim: true
     },
     animalType: {
         type: String,
-        requied: true,
+        required: true,
         trim: true
     },
     avatar: {
@@ -17,7 +17,7 @@ const petSchema = new mongoose.Schema({
     },
     yob: {
         type: Number,
-        requied: true
+        required: true
     },
     breed: {
         type: String

@@ -39,7 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
     if(existedUser) throw new ApiError(409, "user with same email already exists!!!" );
 
     const userAvatar = await uploadOnCloudinary(userAvatarLocalPath);
-    const pet = await createPet(req.body, req.files);
+    const pet = await createPet(req.body, req.files.petAvatar[0]);
 
     if(!pet) throw new ApiError(500, "Pet registration failed!!!");
 
