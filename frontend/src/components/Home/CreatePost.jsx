@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const CreatePost = () => {
   const [caption, setCaption] = useState('');
@@ -8,10 +9,35 @@ const CreatePost = () => {
     setImage(e.target.files[0]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Post submitted:', { caption, image });
-    // In real scenario, call API to save post
+
+    if (!caption && !image) {
+      alert('Please add a caption or an image.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('caption', caption);
+    if (image) {
+      formData.append('image', image);
+    }
+
+    try {
+      const res = await axios.post('http://localhost:5000/api/posts', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('Post created successfully:', res.data);
+      // Optionally reset form
+      setCaption('');
+      setImage(null);
+    } catch (error) {
+      console.error('Error creating post:', error);
+      alert('Something went wrong while posting.');
+    }
   };
 
   return (
