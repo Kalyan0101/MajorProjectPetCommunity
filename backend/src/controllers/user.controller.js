@@ -300,6 +300,29 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 });
 
+const getFollowers = asyncHandler(async (req, res) => {
+
+    const { userName } = req.params;
+    if(!userName) throw new ApiError(400, "userName not found!!!");
+
+    const isAuthorised = req.user;
+    if(!isAuthorised) throw new ApiError(400, "Unauthorised request!!!");
+
+    const user = await User.aggregate([
+        {
+            $match: {
+                userName: userName.toLowerCase()
+            }
+        },
+        {
+            
+        }
+    ])
+
+});
+
+const getFollowing = asyncHandler(async (req, res) => {});
+
 export {
     registerUser,
     allUserName,
