@@ -17,7 +17,9 @@ const TrendingTopics = () => {
           <li key={idx} className="hover:underline cursor-pointer">{topic}</li>
         ))}
       </ul>
+      <p>hello world </p>
     </div>
+
   );
 };
 
