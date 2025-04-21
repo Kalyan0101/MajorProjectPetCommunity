@@ -7,14 +7,14 @@ import Home from "../pages/Home";
 const AppRoutes = () => {
   return (
     <Routes>
+      {/* Protected Route - Home Page */}
+      <Route path="/" element={<Home />} />
+
       {/* Default route */}
-      <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
 
       {/* Auth Routes */}
       <Route path="/signup" element={<Signup />} />
-
-      {/* Protected Route - Home Page */}
-      <Route path="/home" element={<Home />} />
 
       {/* Catch-all: redirect to login or 404 */}
       <Route path="*" element={<Navigate to="/" replace />} />

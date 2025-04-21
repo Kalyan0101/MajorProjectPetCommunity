@@ -7,21 +7,22 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 
 
-const createPet = async(details, file) => {
+const createPet = async(details, file = "") => {
     const { name, type, breed, yob, activity } = details;
-    const petAvatarLocalPath = file.path;    
+
+    const petAvatarLocalPath = file?.path || "";
     
     if( [name, type, yob, breed].some(field => field.trim() === "") ) throw new ApiError(400, "Error: all fields are required!!!");
     
     const petAvatar = await uploadOnCloudinary(petAvatarLocalPath, "pet");
-    if(!petAvatar.url) throw new ApiError(400, "file not uploaded")
+    // if(!petAvatar?.url) throw new ApiError(400, "file not uploaded")
 
     const pet = await Pet.create({
         name,
         animalType: type,
         avatar: {
-            url: petAvatar?.url,
-            public_id: petAvatar?.public_id
+            url: petAvatar?.url || "",
+            public_id: petAvatar?.public_id || ""
         },
         yob,
         breed,
