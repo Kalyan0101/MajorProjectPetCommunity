@@ -1,23 +1,13 @@
+// components/Home/Feed.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const Feed = () => {
-  const [posts, setPosts] = useState([]);
+const Feed = ({ posts }) => {
   const [likes, setLikes] = useState([]);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await axios.get('http://localhost:5000/api/posts');
-        setPosts(res.data);
-        setLikes(res.data.map(post => post.likes || 0)); // Initial like count from backend
-      } catch (error) {
-        console.error('Failed to fetch posts:', error);
-      }
-    };
-
-    fetchPosts();
-  }, []);
+    setLikes(posts.map(post => post.likes || 0)); // Set like count from passed posts
+  }, [posts]);
 
   const handleLike = async (index, postId) => {
     const newLikes = [...likes];
