@@ -25,54 +25,64 @@ const generateAccessRefreshTokens = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-    const { userName, email, fullName, password, location, role } = req.body;
-
-    let userAvatarLocalPath = "";
-    if(req.files && Array.isArray(req.files.userAvatar) && req.files.userAvatar.length > 0){
-        userAvatarLocalPath = req.files.userAvatar[0].path;
-    }
-
-
-    if( [ userName, email, fullName, password, location ].some(Field => Field?.trim() === "") ) throw new ApiError(400, "Error: All fields are required!!!");
-
-    const existedUser = await User.findOne({ email });  
-    if(existedUser) throw new ApiError(409, "user with same email already exists!!!" );
-
-    const userAvatar = await uploadOnCloudinary(userAvatarLocalPath);
-    const pet = await createPet(req.body, req.files.petAvatar[0]);
-
-    if(!pet) throw new ApiError(500, "Pet registration failed!!!");
-
-    const user = await User.create({
-        userName: userName?.toLowerCase(),
-        email,
-        fullName,
-        password,
-        location,
-        role,
-        avatar: {
-            url: userAvatar?.url,
-            public_id: userAvatar?.public_id
-        },
-        pet: pet?._id
-    });
-
-    if(!user) {
-        await Pet.deleteOne({
-            _id: pet._id
-        });
-        throw new ApiError(500, "User registration failed!!!");
-    }
     
-    const userToReturn = user?.toObject();
-    delete userToReturn?.password;
-    delete userToReturn?.refreshToken;
+    try {
+        const { userName, email, fullName, password, location, role } = req.body;
+    
+        let userAvatarLocalPath = "";
+        if(req.files && Array.isArray(req.files.userAvatar) && req.files.userAvatar.length > 0){
+            userAvatarLocalPath = req.files?.userAvatar[0].path;
+        }
 
-    return res.status(201).json(new ApiResponse(
-        201,
-        userToReturn,
-        "User with Pet registered successfully."
-    ))
+        let petAvatarLocalPath = "";
+        if(req.files && Array.isArray(req.files.petAvatar) && req.files.petAvatar.length > 0){
+            petAvatarLocalPath = req.files.petAvatar[0].path;
+        }
+    
+        if( [ userName, email, fullName, password, location ].some(Field => Field?.trim() === "") ) throw new ApiError(400, "Error: All fields are required!!!");
+    
+        const existedUser = await User.findOne({ email });  
+        if(existedUser) throw new ApiError(409, "user with same email already exists!!!");
+    
+        const userAvatar = await uploadOnCloudinary(userAvatarLocalPath);
+        
+        const pet = await createPet(req.body.pet || req.body, petAvatarLocalPath);
+    
+        if(!pet) throw new ApiError(500, "Pet registration failed!!!");
+    
+        const user = await User.create({
+            userName: userName?.toLowerCase(),
+            email,
+            fullName,
+            password,
+            location,
+            role,
+            avatar: {
+                url: userAvatar?.url || "",
+                public_id: userAvatar?.public_id || ""
+            },
+            pet: pet?._id
+        });
+    
+        if(!user) {
+            await Pet.deleteOne({
+                _id: pet._id
+            });
+            throw new ApiError(500, "User registration failed!!!");
+        }
+        
+        const userToReturn = user?.toObject();
+        delete userToReturn?.password;
+        delete userToReturn?.refreshToken;
+    
+        return res.status(201).json(new ApiResponse(
+            201,
+            userToReturn,
+            "User with Pet registered successfully."
+        ))
+    } catch (error) {
+        throw new ApiError(400, error.message);
+    }
 });
 
 const allUserName = asyncHandler(async (_, res) => {

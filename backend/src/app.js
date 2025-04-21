@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import express from "express";
 import cors from "cors";
+import errorHandler from "./middlewares/errorHandler.middleware.js";
 
 const app = express();
 
@@ -35,5 +36,7 @@ import petRouter from "./routes/pet.route.js"
 // route declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/pet", petRouter);
+
+app.use(errorHandler);
 
 export { app }

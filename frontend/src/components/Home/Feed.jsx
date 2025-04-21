@@ -1,24 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Feed = () => {
-  const [likes, setLikes] = useState([0, 0, 0]); // for 3 sample posts
+  const [posts, setPosts] = useState([]);
+  const [likes, setLikes] = useState([]);
 
-  const handleLike = (index) => {
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/posts');
+        setPosts(res.data);
+        setLikes(res.data.map(post => post.likes || 0)); // Initial like count from backend
+      } catch (error) {
+        console.error('Failed to fetch posts:', error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  const handleLike = async (index, postId) => {
     const newLikes = [...likes];
     newLikes[index]++;
     setLikes(newLikes);
+
+    try {
+      await axios.patch(`http://localhost:5000/api/posts/${postId}/like`);
+    } catch (error) {
+      console.error('Failed to update like count:', error);
+    }
   };
 
   return (
     <div className="space-y-4">
-      {[1, 2, 3].map((post, i) => (
-        <div key={post} className="bg-white p-4 shadow rounded">
-          <h4 className="font-semibold mb-1">🐶 PetPost #{post}</h4>
-          <p className="text-gray-700 mb-2">This is a cute pet moment shared by someone.</p>
-          
+      {posts.map((post, i) => (
+        <div key={post._id} className="bg-white p-4 shadow rounded">
+          <h4 className="font-semibold mb-1">🐶 {post.caption || 'PetPost'}</h4>
+          {post.imageUrl && (
+            <img
+              src={post.imageUrl}
+              alt="Pet"
+              className="w-full h-auto max-h-64 object-cover rounded mb-2"
+            />
+          )}
+          <p className="text-gray-700 mb-2">{post.description || 'This is a cute pet moment shared by someone.'}</p>
+
           <div className="flex items-center gap-2">
             <button 
-              onClick={() => handleLike(i)} 
+              onClick={() => handleLike(i, post._id)} 
               className="text-blue-500 hover:underline text-sm"
             >
               ❤️ Like
