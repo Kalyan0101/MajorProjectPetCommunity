@@ -2,39 +2,28 @@ import axios from "axios";
 
 const url = import.meta.env.VITE_HOST;
 
-const register = async (fromData) => {
+const register = async (formData) => {
   try {
-    const res = await axios.post(`${url}/users/register`, fromData, {
+    const res = await axios.post(`${url}/users/register`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
-
-    if (res.status) {
-      return res;
-    }
-    return res;
-
+    return res.data
   } catch (error) {
-    throw error.message;
+    throw error.response.data;
   }
 };
 
-const login = async (fromData) => {
+const login = async (formData) => {
     try {
-      const res = await axios.post(`${url}/users/login`, fromData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-  
-      if (res.status) {
-        return res;
-      }
-      return res;
-  
+      console.log(formData);
+      
+      const res = await axios.post(`${url}/users/login`, formData);
+      return res.data
+
     } catch (error) {
-      throw error.message;
+      throw error.response.data;
     }
 };
 
@@ -44,13 +33,10 @@ const logout = async () => {
             withCredentials: true
         });
 
-        if (res.status) {
-            return res;
-        }
-        return res;
+        return res.data
 
     } catch (error) {
-        throw error.message;
+      throw error.response.data;
     }
 };
 
@@ -60,13 +46,10 @@ const getCurrentUser = async () => {
             withCredentials: true
         });
 
-        if (res.status) {
-            return res;
-        }
-        return res;
+        return res.data
 
     } catch (error) {
-        throw error.message;
+      throw error.response.data;
     }
 };
 
@@ -76,13 +59,10 @@ const refreshAccessToken = async () => {
             withCredentials: true
         });
 
-        if (res.status) {
-            return res;
-        }
-        return res;
+        return res.data
 
     } catch (error) {
-        throw error.message;
+      throw error.response.data;
     }
 };
 
@@ -92,13 +72,10 @@ const changePassword = async (formData) => {
             withCredentials: true
         });
 
-        if (res.status) {
-            return res;
-        }
-        return res;
+        return res.data
 
     } catch (error) {
-        throw error.message;
+      throw error.response.data;
     }
 };
 

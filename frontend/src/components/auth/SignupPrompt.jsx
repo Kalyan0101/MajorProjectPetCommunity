@@ -6,7 +6,7 @@ const SignupPrompt = () => {
     <div className="text-center mt-6">
       <p className="text-sm text-gray-700">Don't have an account?</p>
       <Link
-        to="/signup"
+        to={"/signup"}
         className="mt-2 inline-block bg-green-600 text-white py-2 px-6 rounded-full hover:bg-green-700 transition font-semibold"
       >
         Create New Account

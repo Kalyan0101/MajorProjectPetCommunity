@@ -1,8 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { register } from '../../backend/auth.js';
 import { useNavigate } from 'react-router-dom';
+import { successAlert } from '../alert/success.alert.js';
+import { errorAlert } from '../alert/error.alert.js';
+
 
 const SignupFormFull = () => {
+
+    const navigate = useNavigate();
+    const [error, setError] = useState("");
+
     // Owner Info States
     const [fullName, setFullName] = useState('');
     const [userName, setUserName] = useState('');
@@ -20,13 +27,10 @@ const SignupFormFull = () => {
     const [activity, setActivity] = useState('');
     const [petAvatar, setPetAvatar] = useState(null);
 
-    const navigate = useNavigate();
-    const [error, setError] = useState("");
-
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const fromData = {
+        const formData = {
             fullName,
             userName,
             email,
@@ -44,14 +48,19 @@ const SignupFormFull = () => {
             },
         };
 
-        register(fromData)
-        .then((data) => {
-            navigate("/login");
+        // backend call for registration
+        register(formData)
+        .then((data) => {      
+
+            if(data.success){
+                successAlert(data.message);
+                // force redirection to login page
+                navigate("/login");
+            }
         })
         .catch((err) => {
-            setError(err.message);
+            errorAlert(err.message);
         });
-
     };
 
     return (

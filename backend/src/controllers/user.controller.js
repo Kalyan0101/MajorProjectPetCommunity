@@ -42,7 +42,7 @@ const registerUser = asyncHandler(async (req, res) => {
         if( [ userName, email, fullName, password, location ].some(Field => Field?.trim() === "") ) throw new ApiError(400, "Error: All fields are required!!!");
     
         const existedUser = await User.findOne({ email });  
-        if(existedUser) throw new ApiError(409, "user with same email already exists!!!");
+        if(existedUser) throw new ApiError(409, "user with same email or username already exists!!!");
     
         const userAvatar = await uploadOnCloudinary(userAvatarLocalPath);
         
@@ -96,12 +96,15 @@ const allUserName = asyncHandler(async (_, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-    const { userName, email, password} = req.body;
-    if(!(email || userName)) throw new ApiError(400, "UserName or Email required!!!");
+    const { id, password} = req.body;
+    if(!id) throw new ApiError(400, "UserName or Email required!!!");
 
     const user = await User.findOne(
         {
-            $or: [ { email }, { userName } ]
+            $or: [ 
+                { email: id },
+                { userName: id } 
+            ]
         }
     );
 
