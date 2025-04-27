@@ -1,7 +1,8 @@
+// components/Home/CreatePost.js
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const CreatePost = () => {
+const CreatePost = ({ addPost }) => {
   const [caption, setCaption] = useState('');
   const [image, setImage] = useState(null);
 
@@ -31,6 +32,10 @@ const CreatePost = () => {
       });
 
       console.log('Post created successfully:', res.data);
+
+      // Pass the new post data back to the parent component (Home) to update the feed
+      addPost(res.data);
+
       // Optionally reset form
       setCaption('');
       setImage(null);
