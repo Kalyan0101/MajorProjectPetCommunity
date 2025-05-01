@@ -13,14 +13,23 @@ import NotificationPanel from '../components/Home/NotificationPanel';
 import PetGallery from '../components/Home/PetGallery';
 import TrendingTopics from '../components/Home/TrendingTopics';
 import axios from 'axios';
+import { useSelector } from 'react-redux'
+
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [showMessages, setShowMessages] = useState(false);
 
+  const userData = useSelector(state => state.userData)
+
+  console.log(userData);
+  
+
   const toggleMessagesPanel = () => {
     setShowMessages(prev => !prev);
   };
+
+  
 
   useEffect(() => {
     const fetchPosts = async () => {
