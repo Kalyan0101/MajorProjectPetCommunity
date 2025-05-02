@@ -2,89 +2,85 @@ import axios from "axios";
 
 const url = import.meta.env.VITE_HOST;
 
-const register = async (formData) => {
-  try {
-    const res = await axios.post(`${url}/users/register`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return res.data
-  } catch (error) {
-    throw error.response.data;
-  }
-};
+class AuthService{
 
-const login = async (formData) => {
+  async register(formData) {
+    try {
+      const res = await axios.post(`${url}/users/register`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return res.data
+    } catch (error) {
+      throw error.response.data;
+    }
+  };
+  
+  async login(formData) {
     try {
       console.log(formData);
       
       const res = await axios.post(`${url}/users/login`, formData);
       return res.data
-
+      
     } catch (error) {
       throw error.response.data;
     }
-};
-
-const logout = async () => {
+  };
+  
+  async logout() {
     try {
-        const res = await axios.get(`${url}/users/logout`, {
-            withCredentials: true
-        });
-
-        return res.data
-
+      const res = await axios.get(`${url}/users/logout`, {
+        withCredentials: true
+      });
+      
+      return res.data
+      
     } catch (error) {
       throw error.response.data;
     }
-};
-
-const getCurrentUser = async () => {
+  };
+  
+  async getCurrentUser() {
     try {
-        const res = await axios.get(`${url}/users/currentUser`, {
-            withCredentials: true
-        });
-
-        return res.data
-
+      const res = await axios.get(`${url}/users/currentUser`, {
+        withCredentials: true
+      });
+      
+      return res.data
+      
     } catch (error) {
       throw error.response.data;
     }
-};
-
-const refreshAccessToken = async () => {
+  };
+  
+  async refreshAccessToken(){
     try {
-        const res = await axios.get(`${url}/users/refreshAccessToken`, {
-            withCredentials: true
-        });
-
-        return res.data
-
+      const res = await axios.get(`${url}/users/refreshAccessToken`, {
+        withCredentials: true
+      });
+      
+      return res.data
+      
     } catch (error) {
       throw error.response.data;
     }
-};
-
-const changePassword = async (formData) => {
+  };
+  
+  async changePassword(formData){
     try {
-        const res = await axios.post(`${url}/users/changePassword`, formData, {
-            withCredentials: true
-        });
-
-        return res.data
-
+      const res = await axios.post(`${url}/users/changePassword`, formData, {
+        withCredentials: true
+      });
+      
+      return res.data
+      
     } catch (error) {
       throw error.response.data;
     }
-};
-
-
-export {
-    register,
-    login,
-    logout,
-    getCurrentUser,
-    refreshAccessToken,
-    changePassword
+  };
 }
+
+const authService = new AuthService();
+export default authService;
