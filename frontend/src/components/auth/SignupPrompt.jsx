@@ -1,16 +1,30 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const SignupPrompt = () => {
+
+  const navigate = useNavigate();
+
   return (
-    <div className="text-center mt-6">
-      <p className="text-sm text-gray-700">Don't have an account?</p>
-      <Link
-        to={"/signup"}
-        className="mt-2 inline-block bg-green-600 text-white py-2 px-6 rounded-full hover:bg-green-700 transition font-semibold"
-      >
-        Create New Account
-      </Link>
+    <div className="text-center">
+      <div className="w-full flex items-center justify-between px-5 py-3">
+        <h1 className="text-xl font-semibold text-blue-700">Login to make your opinion.</h1>
+        <div className="flex gap-3">
+          <button 
+            className="bg-blue-500 px-5 py-2 rounded-lg text-white font-semibold"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </button>
+
+          <button 
+            className="bg-blue-500 px-5 py-2 rounded-lg text-white font-semibold"
+            onClick={() => navigate("/signup")}
+          >
+            Sign up
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
