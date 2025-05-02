@@ -4,16 +4,16 @@ import axios from 'axios';  // Import Axios
 const FriendList = () => {
   const [friends, setFriends] = useState([]);
 
-  useEffect(() => {
-    // Fetch friend list from API when component mounts
-    axios.get('https://api.example.com/friends') // Replace with your API URL
-      .then((response) => {
-        setFriends(response.data); // Assuming the API response is an array of friends
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the friend list:", error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   // Fetch friend list from API when component mounts
+  //   axios.get('https://api.example.com/friends') // Replace with your API URL
+  //     .then((response) => {
+  //       setFriends(response.data); // Assuming the API response is an array of friends
+  //     })
+  //     .catch((error) => {
+  //       console.error("There was an error fetching the friend list:", error);
+  //     });
+  // }, []);
 
   const handleClick = (friend) => {
     alert(`You clicked on ${friend.name}`);

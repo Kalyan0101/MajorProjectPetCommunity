@@ -4,18 +4,18 @@ import axios from "axios";
 const NotificationPanel = () => {
   const [notifications, setNotifications] = useState([]);
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/notifications");
-        setNotifications(res.data);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchNotifications = async () => {
+  //     try {
+  //       const res = await axios.get("http://localhost:5000/api/notifications");
+  //       setNotifications(res.data);
+  //     } catch (error) {
+  //       console.error("Error fetching notifications:", error);
+  //     }
+  //   };
 
-    fetchNotifications();
-  }, []);
+  //   fetchNotifications();
+  // }, []);
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md h-64 overflow-y-auto">

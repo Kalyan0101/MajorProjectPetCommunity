@@ -4,18 +4,18 @@ import axios from 'axios';
 const NotificationsDropdown = () => {
   const [notifications, setNotifications] = useState([]);
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/notifications");
-        setNotifications(res.data);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchNotifications = async () => {
+  //     try {
+  //       const res = await axios.get("http://localhost:5000/api/notifications");
+  //       setNotifications(res.data);
+  //     } catch (error) {
+  //       console.error("Error fetching notifications:", error);
+  //     }
+  //   };
 
-    fetchNotifications();
-  }, []);
+  //   fetchNotifications();
+  // }, []);
 
   return (
     <div className="bg-white shadow-md rounded-md w-80 absolute right-4 top-16 z-50 p-4">

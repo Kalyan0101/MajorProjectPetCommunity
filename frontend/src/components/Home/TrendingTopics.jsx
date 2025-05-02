@@ -7,20 +7,20 @@ const TrendingTopics = () => {
   const [loading, setLoading] = useState(true);
 
   // Fetch trending topics on component mount
-  useEffect(() => {
-    const fetchTopics = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/trending-topics'); // Replace with your actual API endpoint
-        setTopics(response.data);
-      } catch (error) {
-        console.error("Error fetching trending topics:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchTopics = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:5000/api/trending-topics'); // Replace with your actual API endpoint
+  //       setTopics(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching trending topics:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchTopics();
-  }, []);
+  //   fetchTopics();
+  // }, []);
 
   if (loading) {
     return <p>Loading trending topics...</p>;

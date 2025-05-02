@@ -4,18 +4,18 @@ import axios from "axios";
 const MessagesPanel = () => {
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/messages");
-        setMessages(res.data);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchMessages = async () => {
+  //     try {
+  //       const res = await axios.get("http://localhost:5000/api/messages");
+  //       setMessages(res.data);
+  //     } catch (error) {
+  //       console.error("Error fetching messages:", error);
+  //     }
+  //   };
 
-    fetchMessages();
-  }, []);
+  //   fetchMessages();
+  // }, []);
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md h-64 overflow-y-auto">

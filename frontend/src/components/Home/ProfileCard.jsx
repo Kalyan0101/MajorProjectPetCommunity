@@ -6,20 +6,20 @@ const ProfileCard = () => {
   const [loading, setLoading] = useState(true); // Loading state
 
   // Fetch profile data from backend on component mount
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/profile'); // Replace with your API endpoint
-        setProfile(response.data); // Assuming the response returns the profile object
-      } catch (error) {
-        console.error("Error fetching profile data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:5000/api/profile'); // Replace with your API endpoint
+  //       setProfile(response.data); // Assuming the response returns the profile object
+  //     } catch (error) {
+  //       console.error("Error fetching profile data:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchProfile();
-  }, []);
+  //   fetchProfile();
+  // }, []);
 
   if (loading) {
     return <p>Loading profile...</p>; // Loading indicator while data is being fetched

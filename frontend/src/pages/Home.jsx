@@ -22,27 +22,25 @@ const Home = () => {
 
   const userData = useSelector(state => state.userData)
 
-  console.log(userData);
+  // console.log(userData);
   
 
   const toggleMessagesPanel = () => {
     setShowMessages(prev => !prev);
   };
 
-  
+  // useEffect(() => {
+  //   const fetchPosts = async () => {
+  //     try {
+  //       const res = await axios.get('http://localhost:5000/api/posts');
+  //       setPosts(res.data);
+  //     } catch (error) {
+  //       console.error('Failed to fetch posts:', error);
+  //     }
+  //   };
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await axios.get('http://localhost:5000/api/posts');
-        setPosts(res.data);
-      } catch (error) {
-        console.error('Failed to fetch posts:', error);
-      }
-    };
-
-    fetchPosts();
-  }, []);
+  //   fetchPosts();
+  // }, []);
 
   const addPost = (newPost) => {
     setPosts([newPost, ...posts]);

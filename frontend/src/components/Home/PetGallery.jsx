@@ -4,18 +4,18 @@ import axios from "axios";
 const PetGallery = () => {
   const [pets, setPets] = useState([]);
 
-  useEffect(() => {
-    const fetchPets = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/pets");
-        setPets(res.data);
-      } catch (error) {
-        console.error("Error fetching pet images:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchPets = async () => {
+  //     try {
+  //       const res = await axios.get("http://localhost:5000/api/pets");
+  //       setPets(res.data);
+  //     } catch (error) {
+  //       console.error("Error fetching pet images:", error);
+  //     }
+  //   };
 
-    fetchPets();
-  }, []);
+  //   fetchPets();
+  // }, []);
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
