@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { login } from "../../backend/auth";
+import authService from "../../backend/auth";
 import { useDispatch } from "react-redux"
 import { login as storeLogin } from "../../store/authSlice.store.js"
 import { successAlert } from "../alert/success.alert.js";
@@ -18,8 +17,8 @@ const LoginForm = () => {
   // Handle form submission
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    login({ id, password })
+    
+    authService.login({ id, password })
     .then((res) => {
       
       if(res.success){

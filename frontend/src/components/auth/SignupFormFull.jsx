@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { register } from '../../backend/auth.js';
+import authService from '../../backend/auth.js';
 import { useNavigate } from 'react-router-dom';
 import { successAlert } from '../alert/success.alert.js';
 import { errorAlert } from '../alert/error.alert.js';
@@ -49,7 +49,7 @@ const SignupFormFull = () => {
         };
 
         // backend call for registration
-        register(formData)
+        authService.register(formData)
         .then((data) => {      
 
             if(data.success){
