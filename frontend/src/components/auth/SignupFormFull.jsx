@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import authService from '../../backend/auth.js';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { successAlert } from '../alert/success.alert.js';
 import { errorAlert } from '../alert/error.alert.js';
 
@@ -50,17 +50,17 @@ const SignupFormFull = () => {
 
         // backend call for registration
         authService.register(formData)
-        .then((data) => {      
+            .then((data) => {
 
-            if(data.success){
-                successAlert(data.message);
-                // force redirection to login page
-                navigate("/login");
-            }
-        })
-        .catch((err) => {
-            errorAlert(err.message);
-        });
+                if (data.success) {
+                    successAlert(data.message);
+                    // force redirection to login page
+                    navigate("/login");
+                }
+            })
+            .catch((err) => {
+                errorAlert(err.message);
+            });
     };
 
     return (
@@ -119,6 +119,16 @@ const SignupFormFull = () => {
             </div>
 
             <button type="submit" className="btn-secondary mt-10 w-full">Create Account</button>
+
+            <p className="text-center mt-3">
+                Already have an account?
+                <Link 
+                    to={"/login"}
+                    className='ml-2 text-blue-500 underline'
+                >
+                    login
+                </Link>
+            </p>
         </form>
     );
 };

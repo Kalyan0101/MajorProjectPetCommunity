@@ -1,4 +1,3 @@
-// Home.jsx
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import ProfileCard from '../components/Home/ProfileCard';
@@ -12,42 +11,47 @@ import MessagesPanel from '../components/Home/MessagesPanel';
 import NotificationPanel from '../components/Home/NotificationPanel';
 import PetGallery from '../components/Home/PetGallery';
 import TrendingTopics from '../components/Home/TrendingTopics';
-import axios from 'axios';
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import authService from '../backend/auth';
+import { logout as storeLogout, login as storeLogin } from '../store/authSlice.store';
+import SignupPrompt from '../components/auth/SignupPrompt';
 
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [showMessages, setShowMessages] = useState(false);
-
-  const userData = useSelector(state => state.userData)
-
-  // console.log(userData);
-  
+  const [isLoggedin, setIsLoggedin] = useState(false);
+  const dispatch = useDispatch();
 
   const toggleMessagesPanel = () => {
     setShowMessages(prev => !prev);
   };
 
-  // useEffect(() => {
-  //   const fetchPosts = async () => {
-  //     try {
-  //       const res = await axios.get('http://localhost:5000/api/posts');
-  //       setPosts(res.data);
-  //     } catch (error) {
-  //       console.error('Failed to fetch posts:', error);
-  //     }
-  //   };
-
-  //   fetchPosts();
-  // }, []);
-
   const addPost = (newPost) => {
     setPosts([newPost, ...posts]);
   };
 
+  useEffect(() => {
+    authService.getCurrentUser()
+      .then((data) => {
+
+        if (data.data) {
+          dispatch(storeLogin(data.data));
+          setIsLoggedin(true);
+        } else {
+          dispatch(storeLogout());
+          setIsLoggedin(false);
+        }
+
+      })
+      .catch((error) => { })
+  }, [])
+
   return (
     <div>
+
+      { !isLoggedin && <SignupPrompt /> }
+
       <Navbar toggleMessagesPanel={toggleMessagesPanel} />
 
       <div className="flex">
@@ -65,7 +69,8 @@ const Home = () => {
 
             {/* Center Column */}
             <div className="col-span-2 space-y-4">
-              <CreatePost addPost={addPost} />
+              { isLoggedin && <CreatePost addPost={addPost} /> }
+              
               <Feed posts={posts} />
               <TrendingTopics />
             </div>
@@ -92,7 +97,7 @@ const Home = () => {
         </main>
       </div>
     </div>
-  );
+  )
 };
 
 export default Home;

@@ -18,10 +18,10 @@ class AuthService{
   };
   
   async login(formData) {
-    try {
-      console.log(formData);
-      
-      const res = await axios.post(`${url}/users/login`, formData);
+    try {      
+      const res = await axios.post(`${url}/users/login`, formData, {
+          withCredentials: true
+      });
       return res.data
       
     } catch (error) {

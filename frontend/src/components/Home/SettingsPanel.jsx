@@ -5,22 +5,6 @@ const SettingsPanel = () => {
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user settings on component mount
-  // useEffect(() => {
-  //   const fetchSettings = async () => {
-  //     try {
-  //       const response = await axios.get('http://localhost:5000/api/settings'); // Replace with your actual API endpoint
-  //       setSettings(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching settings:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchSettings();
-  // }, []);
-
   if (loading) {
     return <p>Loading settings...</p>;
   }
