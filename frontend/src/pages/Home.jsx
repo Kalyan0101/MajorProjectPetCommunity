@@ -6,7 +6,7 @@ import CreatePost from '../components/Home/CreatePost';
 import Feed from '../components/Home/Feed';
 import FriendList from '../components/layout/FriendList';
 import Navbar from '../components/layout/Navbar';
-import ExploreSection from '../components/Home/ExploreSection';
+
 import MessagesPanel from '../components/Home/MessagesPanel';
 import NotificationPanel from '../components/Home/NotificationPanel';
 import PetGallery from '../components/Home/PetGallery';
@@ -55,16 +55,11 @@ const Home = () => {
       <Navbar toggleMessagesPanel={toggleMessagesPanel} />
 
       <div className="flex">
-        <Sidebar />
-
         <main className="flex-1 p-4 flex flex-col gap-4 relative">
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-5 gap-4">
             {/* Left Column */}
             <div className="space-y-4 col-span-1">
-              <ProfileCard />
-              <SettingsPanel />
-              <ExploreSection />
-              <PetGallery />
+              <Sidebar />
             </div>
 
             {/* Center Column */}
