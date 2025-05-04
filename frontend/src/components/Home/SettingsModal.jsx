@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faRightFromBracket, faUser, faLock, faBell, faShield } from '@fortawesome/free-solid-svg-icons'
 import authService from '../../backend/auth';
 import { logout as storeLogout } from '../../store/authSlice.store';
 import { useDispatch } from 'react-redux';
@@ -29,23 +27,19 @@ const SettingsModal = ({ isOpen, onClose }) => {
     const list = [
         {
             name: "Profile Settings",
-            link: "#",
-            icon: faUser
+            link: "#"
         },
         {
             name: "Privacy Settings",
-            link: "#",
-            icon: faLock
+            link: "#"
         },
         {
             name: "Notification Settings",
-            link: "#",
-            icon: faBell
+            link: "#"
         },
         {
             name: "Security Settings",
-            link: "#",
-            icon: faShield
+            link: "#"
         },
         {
             name: "Account Settings",
@@ -86,7 +80,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
             <h3 className="font-semibold text-gray-800">Logout</h3>
             <p className="text-sm text-gray-500">Sign out of your account.</p>
             <button
-              onClick={handleLogout}
+              onClick={logout}
               className="text-sm text-red-600 hover:underline inline-block mt-1"
             >
               Logout
