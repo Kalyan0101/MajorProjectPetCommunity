@@ -2,88 +2,117 @@ import React, { useState } from 'react';
 import NotificationsDropdown from '../Home/NotificationsDropdown';
 import SettingsModal from '../Home/SettingsModal';
 import { Link } from 'react-router-dom';
+import { MessagesPanel } from "../Home"
 
 // Icons from lucide-react
 import { Bell, MessageSquare, Settings, Compass, Home, Search } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
-const Navbar = ({ toggleMessagesPanel }) => {
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+const Navbar = () => {
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+    const [showMessages, setShowMessages] = useState(false)
 
-  const toggleNotifications = () => {
-    setShowNotifications(!showNotifications);
-  };
+    const user = useSelector(state => state.auth);
 
-  const openSettings = () => {
-    setIsSettingsModalOpen(true);
-  };
+    const toggleNotifications = () => {
+        setShowNotifications(!showNotifications);
+    };
 
-  const closeSettings = () => {
-    setIsSettingsModalOpen(false);
-  };
+    const openSettings = () => {
+        setIsSettingsModalOpen(true);
+    };
 
-  return (
-    <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-      {/* Left: Logo */}
-      <div className="flex items-center gap-4">
-        <Link to="/" className="text-xl font-bold text-blue-600">
-          PetCommunity
-        </Link>
-      </div>
+    const closeSettings = () => {
+        setIsSettingsModalOpen(false);
+    };
 
-      {/* Center: Search Bar with Icon */}
-      <div className="flex-1 flex justify-center">
-        <div className="relative w-80">
-          <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">
-            <Search className="w-4 h-4" />
-          </span>
-          <input
-            type="text"
-            placeholder="Search PetCommunity..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-      </div>
+    const toggleMessagesPanel = () => {
+        setShowMessages(pre => !pre)
+    }
 
-      {/* Right: Icons */}
-      <div className="flex gap-6 items-center ml-6">
-        <Link to="/" className="hover:text-blue-500" title="Home">
-          <Home className="w-6 h-6" />
-        </Link>
+    return (
+        <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+            {/* Left: Logo */}
+            <div className="flex items-center gap-4">
+                <Link to="/" className="text-xl font-bold text-blue-600">
+                    PetCommunity
+                </Link>
+            </div>
 
-        <Link to="/discover" className="hover:text-blue-500" title="Discover">
-          <Compass className="w-5 h-5" />
-        </Link>
+            {/* Center: Search Bar with Icon */}
+            <div className="flex-1 flex justify-center">
+                <div className="relative w-80">
+                    <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">
+                        <Search className="w-4 h-4" />
+                    </span>
+                    <input
+                        type="text"
+                        placeholder="Search PetCommunity..."
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                </div>
+            </div>
 
-        <button onClick={toggleMessagesPanel} className="hover:text-blue-500" title="Messages">
-          <MessageSquare className="w-5 h-5" />
-        </button>
+            {/* Right: Icons */}
+            <div className="flex gap-6 items-center ml-6">
+                <Link to="/" className="hover:text-blue-500" title="Home">
+                    <Home className="w-6 h-6" />
+                </Link>
 
-        <button onClick={openSettings} className="hover:text-blue-500" title="Settings">
-          <Settings className="w-5 h-5" />
-        </button>
+                <Link to="/discover" className="hover:text-blue-500" title="Discover">
+                    <Compass className="w-5 h-5" />
+                </Link>
 
-        <div className="relative">
-          <button onClick={toggleNotifications} className="text-gray-700 hover:text-blue-500" title="Notifications">
-            <Bell className="w-5 h-5" />
-          </button>
-          {showNotifications && <NotificationsDropdown />}
-        </div>
+                { user.status &&
+                    <button onClick={toggleMessagesPanel} className="hover:text-blue-500" title="Messages">
+                        <MessageSquare className="w-5 h-5" />
+                    </button>
+                }
 
-        {/* Profile Picture */}
-        <Link to="/profile" title="Profile">
-          <img
-            src="https://via.placeholder.com/40"
-            alt="Profile"
-            className="w-10 h-10 rounded-full border border-gray-300 hover:ring-2 ring-blue-400 transition duration-200"
-          />
-        </Link>
-      </div>
+                { user.status &&
+                    <button onClick={openSettings} className="hover:text-blue-500" title="Settings">
+                        <Settings className="w-5 h-5" />
+                    </button>
+                }
 
-      {/* Settings Modal */}
-      <SettingsModal isOpen={isSettingsModalOpen} onClose={closeSettings} />
-    </nav>
-  );
+                { user.status &&
+                    <div className="relative">
+                        <button onClick={toggleNotifications} className="text-gray-700 hover:text-blue-500" title="Notifications">
+                            <Bell className="w-5 h-5" />
+                        </button>
+                        {showNotifications && <NotificationsDropdown />}
+                    </div>
+                }
+
+                { user.status &&
+                    <Link to="/profile" title="Profile">
+                        <img
+                            src={ user.userData?.avatar?.url }
+                            alt="profile"
+                            className="w-10 h-10 rounded-full object-cover object-center border border-gray-300 hover:ring-2 ring-blue-400 transition duration-200"
+                        />
+                    </Link>
+                }
+            </div>
+
+            {/* Settings Modal */}
+            <SettingsModal isOpen={isSettingsModalOpen} onClose={closeSettings} />
+
+            {/* Slide-in Messages Panel */}
+            {showMessages && (
+                <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-50 transition-transform duration-300 ease-in-out">
+                    <div className="flex justify-between items-center p-4 border-b">
+                        <h3 className="font-semibold text-lg">Messages</h3>
+                        <button onClick={toggleMessagesPanel} className="text-red-500 font-bold text-xl">&times;</button>
+                    </div>
+                    <div className="p-4 overflow-y-auto h-[calc(100%-4rem)]">
+                        <MessagesPanel />
+                    </div>
+                </div>
+            )}
+        </nav>
+    );
 };
 
 export default Navbar;

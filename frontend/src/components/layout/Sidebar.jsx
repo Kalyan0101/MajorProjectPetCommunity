@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Sidebar = () => {
+const   Sidebar = () => {
   return (
     <div className="w-54 bg-white p-4 shadow-md h-screen sticky top-0 flex flex-col items-center">
       {/* Profile Image (top) */}

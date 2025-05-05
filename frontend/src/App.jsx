@@ -1,15 +1,33 @@
 import React from "react";
-import AppRoutes from "./routes/AppRoutes";
-import SignupPrompt from "./components/auth/SignupPrompt";
+import AppRoutes from "./routes/App.Routes.jsx";
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider, Navigate } from "react-router"
+import AuthLayout from "./routes/Auth.Routes.jsx";
+import { Login, Signup, Home, Settings, ProfilePage } from "./pages/index.js"
 
 const App = () => {
 
-  return (
-    <div className="bg-gray-100 min-h-screen">
+    const router = createBrowserRouter(
+        createRoutesFromElements(
+            <Route >
+                {/* authentication route */}
+                <Route path="auth" element={<AuthLayout />}>
+                    <Route path="login" element={<Login />} />
+                    <Route path="signup" element={<Signup />} />
+                </Route>
 
-      <AppRoutes />
-    </div>
-  );
+                {/* profile route */}
+                <Route path="/" element={<AppRoutes />} >
+                    <Route path="" element={<Home />} />
+                    <Route path="settings" element={<Settings />} />
+                    <Route path="profile" element={<ProfilePage />} />
+                </Route>
+
+                {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+            </Route>
+        )
+    )
+
+    return <RouterProvider router={router} />;
 };
 
 export default App;
