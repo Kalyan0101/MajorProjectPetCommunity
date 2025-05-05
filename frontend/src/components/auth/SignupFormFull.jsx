@@ -55,7 +55,7 @@ const SignupFormFull = () => {
                 if (data.success) {
                     successAlert(data.message);
                     // force redirection to login page
-                    navigate("/login");
+                    navigate("/auth/login");
                 }
             })
             .catch((err) => {
@@ -118,7 +118,7 @@ const SignupFormFull = () => {
             <p className="text-center mt-3">
                 Already have an account?
                 <Link 
-                    to={"/login"}
+                    to={"/auth/login"}
                     className='ml-2 text-blue-500 underline'
                 >
                     login

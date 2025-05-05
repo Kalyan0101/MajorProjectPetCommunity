@@ -12,14 +12,14 @@ const SignupPrompt = () => {
         <div className="flex gap-3">
           <button 
             className="bg-blue-500 px-5 py-2 rounded-lg text-white font-semibold"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/auth/login")}
           >
             Login
           </button>
 
           <button 
             className="bg-blue-500 px-5 py-2 rounded-lg text-white font-semibold"
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate("/auth/signup")}
           >
             Sign up
           </button>

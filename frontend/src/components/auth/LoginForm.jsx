@@ -60,7 +60,7 @@ const LoginForm = () => {
       </button>
       <p className="text-center mt-4 text-sm">
         New here?
-        <Link to={"/signup"} className="text-blue-600 underline ml-1" >
+        <Link to={"/auth/signup"} className="text-blue-600 underline ml-1" >
           Create an account
         </Link>
       </p>
