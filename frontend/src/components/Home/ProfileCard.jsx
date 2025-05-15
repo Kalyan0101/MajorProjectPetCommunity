@@ -1,11 +1,8 @@
 import React from 'react';
 
-const ProfileCard = (userData ) => {  
+const ProfileCard = ({ status, userData }) => {
 
-  console.log(userData);
-  
-
-  return userData && (
+  return status && (
     <div className="bg-white shadow p-4 rounded-md">
       <img
         src={ userData?.avatar?.url }

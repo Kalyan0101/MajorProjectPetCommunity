@@ -1,61 +1,50 @@
 import axios from "axios";
 
-const allUserName = async () => {
-    try {
-        const res = await axios.get(`${url}/users/allUserName`, {
-            withCredentials: true
-        });
+const url = import.meta.env.VITE_HOST;
 
-        if (res.status) {
+class Config{
+    async allUserName(){
+        try {
+            const res = await axios.get(`${url}/users/allUserName`, {
+                withCredentials: true
+            });
             return res;
+            
+        } catch (error) {
+            throw error.message;
         }
-        return res;
-
-    } catch (error) {
-        throw error.message;
-    }
-};
-
-const updateAvatar = async (formData) => {
-    try {
-        const res = await axios.post(`${url}/users/updateAvatar`, formData, {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
-        });
-
-        if (res.status) {
+    };
+    
+    async updateAvatar(formData){
+        try {
+            const res = await axios.post(`${url}/users/updateAvatar`, formData, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
             return res;
+            
+        } catch (error) {
+            throw error.message;
         }
-        return res;
-
-    } catch (error) {
-        throw error.message;
-    }
-};
-
-const updateDetails = async (formData) => {
-    try {
-        const res = await axios.post(`${url}/users/updateDetails`, formData, {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
-        });
-
-        if (res.status) {
-            return res;
+    };
+    
+    async updateDetails(formData){
+        
+        try {
+            const res = await axios.post(`${url}/users/updateDetails`, formData, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            return res.data;
+            
+        } catch (error) {
+            throw error.response.data;
         }
-        return res;
-
-    } catch (error) {
-        throw error.message;
-    }
-};
-
-export {
-    allUserName,
-    updateAvatar,
-    updateDetails
+    };
 }
+
+export default new Config();

@@ -68,33 +68,36 @@ const registerPet = asyncHandler(async (req, res) => {
 const deletePet = asyncHandler(async (req, res) => {    
     isAuthorised(req);
 
-    const petId = req.body._id;
-    if(!petId) throw new ApiError(400, "pet id required");
-
-    const pet = await Pet.findById(petId);
-    if(!pet) throw new ApiError(400, "pet does not exists!!!");
-
-    const isAvatarDelete = await deleteFromCloudinary(pet.avatar.public_id);
-    if(!isAvatarDelete) throw new ApiError(500, `Something wrong about avatar file!!!, ${isAvatarDelete}`);
-
-    const isPetDelete = await Pet.deleteOne({ _id: pet._id });
-    if(!isPetDelete) throw new ApiError(500, "pet not delete Try again afer sometime!!!");
-
-    await User.findByIdAndUpdate(
-        req.user._id,
-        {
-            $pull: {
-                // pet: new mongoose.Types.ObjectId(petId)
-                pet: petId
+    try {
+        const { petId } = req.params;
+        if(!petId) throw new ApiError(400, "pet id required");
+    
+        const pet = await Pet.findById(petId);
+        if(!pet) throw new ApiError(400, "pet does not exists!!!");
+    
+        const isAvatarDelete = await deleteFromCloudinary(pet.avatar.public_id);
+        if(!isAvatarDelete) throw new ApiError(500, `Something wrong about avatar file!!!, ${isAvatarDelete}`);
+    
+        const isPetDelete = await Pet.deleteOne({ _id: pet._id });
+        if(!isPetDelete) throw new ApiError(500, "pet not delete Try again afer sometime!!!");
+    
+        await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $pull: {
+                    pet: petId
+                }
             }
-        }
-    );
-
-    return res.status(200).json(new ApiResponse(
-        200,
-        {},
-        "pet deleted."
-    ));
+        );
+    
+        return res.status(200).json(new ApiResponse(
+            200,
+            {},
+            "pet deleted."
+        ));
+    } catch (error) {
+        throw new ApiError(400, error)
+    }
     
 });
 

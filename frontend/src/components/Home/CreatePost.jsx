@@ -23,26 +23,6 @@ const CreatePost = ({ addPost }) => {
     if (image) {
       formData.append('image', image);
     }
-
-    // try {
-    //   const res = await axios.post('http://localhost:5000/api/posts', formData, {
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data',
-    //     },
-    //   });
-
-    //   console.log('Post created successfully:', res.data);
-
-    //   // Pass the new post data back to the parent component (Home) to update the feed
-    //   addPost(res.data);
-
-    //   // Optionally reset form
-    //   setCaption('');
-    //   setImage(null);
-    // } catch (error) {
-    //   console.error('Error creating post:', error);
-    //   alert('Something went wrong while posting.');
-    // }
   };
 
   return (

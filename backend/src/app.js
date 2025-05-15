@@ -32,10 +32,12 @@ app.use(cookieParser());
 // import routers
 import userRouter from "./routes/user.route.js";
 import petRouter from "./routes/pet.route.js"
+import postRouter from "./routes/post.route.js"
 
 // route declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/pet", petRouter);
+app.use("/api/v1/post", postRouter);
 
 app.use(errorHandler);
 

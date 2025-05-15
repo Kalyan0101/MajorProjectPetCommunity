@@ -27,17 +27,14 @@ const Home = () => {
             {/* Left Column */}
             <div className="space-y-4 col-span-1">
               {/* <Sidebar /> */}
-              {
-                user?.status && <ProfileCard { ...user.userData } />
-              }
+              { user.status && <ProfileCard { ...user } /> }
             </div>
 
             {/* Center Column */}
             <div className="col-span-2 space-y-4">
 
               { user?.status && <CreatePost addPost={addPost} /> }
-
-              <Feed posts={posts} />
+              <Feed posts={posts} user={user} />
               <TrendingTopics />
             </div>
 

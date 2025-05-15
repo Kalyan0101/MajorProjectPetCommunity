@@ -156,7 +156,7 @@ const dummyPosts = [
   },
 ];
 
-const Feed = () => {
+const Feed = ({ posts, user }) => {
   const [likes, setLikes] = useState([]);
 
   useEffect(() => {
@@ -193,12 +193,14 @@ const Feed = () => {
           <p className="text-gray-700 mb-3">{post.description}</p>
 
           <div className="flex items-center gap-2 text-sm">
-            <button
+            { user?.status &&
+              <button
               onClick={() => handleLike(i)}
               className="flex items-center gap-1 text-blue-600 hover:underline"
-            >
-              <FaRegThumbsUp /> Like
-            </button>
+              >
+                <FaRegThumbsUp /> Like
+              </button>
+            }
             <span className="text-gray-600">{likes[i]} likes</span>
           </div>
         </div>

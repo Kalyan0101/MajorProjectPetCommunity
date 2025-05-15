@@ -16,7 +16,7 @@ router.use(verifyJWT);
 
 router.route("/getAllPet").get(getAllPet);
 router.route("/registerPet").post(upload.single("avatar"), registerPet);
-router.route("/deletePet").post(deletePet);
+router.route("/deletePet/:petId").delete(deletePet);
 router.route("/updateAvatar").post(upload.single("avatar"), updatePetAvatar);
 router.route("/updateDetails").post(updatePetDetails);
 

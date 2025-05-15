@@ -6,6 +6,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 import { createPet } from "./pet.controller.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 const generateAccessRefreshTokens = async (userId) => {
     try {
@@ -264,11 +265,42 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     const isAuthorised = req?.user;
     if(!isAuthorised) throw new ApiError(400, "Unauthorised Access!!! OR User not login!!!");
 
-    const user = await User.findById(req.user._id).select("-password");
+    // const user = await User.findById(req.user._id).select("-password");
+
+    const user = await User.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(req.user?._id)
+            }
+        },
+        {
+            $lookup: {
+                from: "pets",
+                localField: "pet",
+                foreignField: "_id",
+                as: "allPets"
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                userName: 1,
+                email: 1,
+                fullName: 1,
+                avatar: 1,
+                location: 1,
+                role: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                refreshToken: 1,
+                allPets: 1
+            }
+        }
+    ]);   
 
     return res.status(200).json(new ApiResponse(
         200,
-        user,
+        user[0],
         "User Details fetched Successful."
     ));
 });
@@ -280,7 +312,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
     try {
         const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
-        console.log(decodedToken);
         if(!decodedToken) throw new ApiError(400, "Invalid refresh Token!!!");
     
         const user = await User.findById(decodedToken?._id);

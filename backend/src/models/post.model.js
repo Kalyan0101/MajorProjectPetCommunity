@@ -14,13 +14,7 @@ const postSchema = new mongoose.Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
-    },
-    love: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Love"
-        }
-    ]
+    }
 }, { timestamps: true });
 
 export const Post = mongoose.model("Post", postSchema)
