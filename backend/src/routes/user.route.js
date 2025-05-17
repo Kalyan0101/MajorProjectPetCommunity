@@ -37,6 +37,6 @@ router.route("/currentUser").get(verifyJWT, getCurrentUser);
 router.route("/refreshAccessToken").get(verifyJWT, refreshAccessToken);
 router.route("/updateAvatar").post(verifyJWT, upload.single("avatar"), updateUserAvatar);
 router.route("/changePassword").post(verifyJWT, changePassword);    
-router.route("/updateDetails").post(verifyJWT, updateAccountDetails);
+router.route("/updateDetails").post(verifyJWT, upload.single("avatar"), updateAccountDetails);
 
 export default router;

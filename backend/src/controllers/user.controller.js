@@ -3,14 +3,16 @@ import { Pet } from "../models/pet.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+    deleteFromCloudinary,
+    uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 import { createPet } from "./pet.controller.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
 const generateAccessRefreshTokens = async (userId) => {
     try {
-        
         const user = await User.findById(userId);
         const accessToken = user.generateAccessToken();
         const refreshToken = user.generateRefreshToken();
@@ -18,39 +20,58 @@ const generateAccessRefreshTokens = async (userId) => {
         user.refreshToken = refreshToken;
         await user.save({ validateBeforeSave: false });
 
-        return {accessToken, refreshToken};
-        
+        return { accessToken, refreshToken };
     } catch (error) {
         throw new ApiError(500, error?.message);
     }
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-    
     try {
-        const { userName, email, fullName, password, location, role } = req.body;
-    
+        const { userName, email, fullName, password, location, role } =
+            req.body;
+
         let userAvatarLocalPath = "";
-        if(req.files && Array.isArray(req.files.userAvatar) && req.files.userAvatar.length > 0){
+        if (
+            req.files &&
+            Array.isArray(req.files.userAvatar) &&
+            req.files.userAvatar.length > 0
+        ) {
             userAvatarLocalPath = req.files?.userAvatar[0].path;
         }
 
         let petAvatarLocalPath = "";
-        if(req.files && Array.isArray(req.files.petAvatar) && req.files.petAvatar.length > 0){
+        if (
+            req.files &&
+            Array.isArray(req.files.petAvatar) &&
+            req.files.petAvatar.length > 0
+        ) {
             petAvatarLocalPath = req.files.petAvatar[0].path;
         }
-    
-        if( [ userName, email, fullName, password, location ].some(Field => Field?.trim() === "") ) throw new ApiError(400, "Error: All fields are required!!!");
-    
-        const existedUser = await User.findOne({ email });  
-        if(existedUser) throw new ApiError(409, "user with same email or username already exists!!!");
-    
+
+        if (
+            [userName, email, fullName, password, location].some(
+                (Field) => Field?.trim() === ""
+            )
+        )
+            throw new ApiError(400, "Error: All fields are required!!!");
+
+        const existedUser = await User.findOne({ email });
+        if (existedUser)
+            throw new ApiError(
+                409,
+                "user with same email or username already exists!!!"
+            );
+
         const userAvatar = await uploadOnCloudinary(userAvatarLocalPath);
-        
-        const pet = await createPet(req.body.pet || req.body, petAvatarLocalPath);
-    
-        if(!pet) throw new ApiError(500, "Pet registration failed!!!");
-    
+
+        const pet = await createPet(
+            req.body.pet || req.body,
+            petAvatarLocalPath
+        );
+
+        if (!pet) throw new ApiError(500, "Pet registration failed!!!");
+
         const user = await User.create({
             userName: userName?.toLowerCase(),
             email,
@@ -60,27 +81,31 @@ const registerUser = asyncHandler(async (req, res) => {
             role,
             avatar: {
                 url: userAvatar?.url || "",
-                public_id: userAvatar?.public_id || ""
+                public_id: userAvatar?.public_id || "",
             },
-            pet: pet?._id
+            pet: pet?._id,
         });
-    
-        if(!user) {
+
+        if (!user) {
             await Pet.deleteOne({
-                _id: pet._id
+                _id: pet._id,
             });
             throw new ApiError(500, "User registration failed!!!");
         }
-        
+
         const userToReturn = user?.toObject();
         delete userToReturn?.password;
         delete userToReturn?.refreshToken;
-    
-        return res.status(201).json(new ApiResponse(
-            201,
-            userToReturn,
-            "User with Pet registered successfully."
-        ))
+
+        return res
+            .status(201)
+            .json(
+                new ApiResponse(
+                    201,
+                    userToReturn,
+                    "User with Pet registered successfully."
+                )
+            );
     } catch (error) {
         throw new ApiError(400, error.message);
     }
@@ -89,197 +114,237 @@ const registerUser = asyncHandler(async (req, res) => {
 const allUserName = asyncHandler(async (_, res) => {
     const allUserName = await User.find({}, "userName");
 
-    return res.status(200).json(new ApiResponse(
-        200,
-        allUserName,
-        "userName fetched successfully."
-    ))
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, allUserName, "userName fetched successfully.")
+        );
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-    const { id, password} = req.body;
-    if(!id) throw new ApiError(400, "UserName or Email required!!!");
+    const { id, password } = req.body;
+    if (!id) throw new ApiError(400, "UserName or Email required!!!");
 
-    const user = await User.findOne(
-        {
-            $or: [ 
-                { email: id },
-                { userName: id } 
-            ]
-        }
-    );
+    const user = await User.findOne({
+        $or: [{ email: id }, { userName: id }],
+    });
 
-    if(!user) throw new ApiError(404, "User does not exists!!!");
+    if (!user) throw new ApiError(404, "User does not exists!!!");
 
     const isPasswordValid = await user.isPasswordCorrect(password);
-    if(!isPasswordValid) throw new ApiError(401, "Invalid user credentials!!!");
+    if (!isPasswordValid)
+        throw new ApiError(401, "Invalid user credentials!!!");
 
-    const { accessToken, refreshToken } = await generateAccessRefreshTokens(user?._id);
+    const { accessToken, refreshToken } = await generateAccessRefreshTokens(
+        user?._id
+    );
 
     const options = {
         httpOnly: true,
-        secure: true
-    }
+        secure: true,
+    };
 
     const userToReturn = user?.toObject();
     delete userToReturn?.password;
     delete userToReturn?.refreshToken;
     Object.freeze(userToReturn);
 
-    return res.status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .json(new ApiResponse(
-        200,
-        userToReturn,
-        "User logged in successfully."
-    ));
+    return res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+            new ApiResponse(200, userToReturn, "User logged in successfully.")
+        );
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-
     const user = req.user;
 
-    if(!user) throw new ApiError(401, "Unauthorised request!!!");
+    if (!user) throw new ApiError(401, "Unauthorised request!!!");
 
     await User.findByIdAndUpdate(
         user?._id,
         {
             $unset: {
-                refreshToken: 1
-            }
+                refreshToken: 1,
+            },
         },
         {
-            new: true
+            new: true,
         }
     );
 
     const options = {
         httpOnly: true,
-        secure: true
+        secure: true,
     };
-    return res.status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "User logged out."));
-
+    return res
+        .status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(new ApiResponse(200, {}, "User logged out."));
 });
 
 const changePassword = asyncHandler(async (req, res) => {
-
     const isAuthorised = req.user;
-    if(!isAuthorised) throw new ApiError(401, "Unauthorised Access!!!")
-    
+    if (!isAuthorised) throw new ApiError(401, "Unauthorised Access!!!");
+
     const { oldPassword, newPassword } = req.body;
 
-    if(!(oldPassword && newPassword)) throw new ApiError(400, "Old and new both passwords are required!!!");
+    if (!(oldPassword && newPassword))
+        throw new ApiError(400, "Old and new both passwords are required!!!");
 
     const user = await User.findById(isAuthorised._id);
 
     const isOldPasswordCorrect = user.isPasswordCorrect(oldPassword);
-    if(!isOldPasswordCorrect) throw new ApiError(400, "Old password not matched!!!");
+    if (!isOldPasswordCorrect)
+        throw new ApiError(400, "Old password not matched!!!");
 
     user.password = newPassword;
     user.save({ validateBeforeSave: false });
 
     return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Password changed successfully!!!"));
+        .status(200)
+        .json(new ApiResponse(200, {}, "Password changed successfully!!!"));
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
+    try {
+        const isAuthorised = req.user;
+        if (!isAuthorised) throw new ApiError(400, "Unauthorised Access!!!");
     
-    const isAuthorised = req.user;
-    if(!isAuthorised) throw new ApiError(400, "Unauthorised Access!!!");
+        const newAvatarLocalPath = req?.file?.path || "";
+    
+        if (newAvatarLocalPath) {
+            const oldUser = req.user;
+    
+            var newAvatar = await uploadOnCloudinary(newAvatarLocalPath); // WARNING! var used
+            if (!newAvatar)
+                throw new ApiError(
+                    500,
+                    "Facing error while uploading the avatar file!!!"
+                );
+    
+            const isOldAvatarDeleted = await deleteFromCloudinary(oldUser.avatar.public_id);    
+            if (!isOldAvatarDeleted) {
+                await deleteFromCloudinary(newAvatar?.public_id);
+                throw new ApiError(
+                    500,
+                    "Facing defficulties while deleting the old file!!!"
+                );
+            }
+        }
+    
+        const updatesField = {};
+        if (req.body.fullName) updatesField.fullName = req.body.fullName;
+        if (req.body.location) updatesField.location = req.body.location;
+        if (req.body.role) updatesField.role = req.body.role;
+        if (newAvatarLocalPath) updatesField.avatar = {
+                url: newAvatar.url,
+                public_id: newAvatar.public_id,
+            };
+    
+        const user = await User.findByIdAndUpdate(
+            req.user?._id,
+            {
+                $set: updatesField,
+            },
+            {
+                new: true,
+            }
+        ).select("-password");
+    
+        if (!user) throw new ApiError(500, "User updation failed!!!");
+    
+        return res
+        .status(200)
+        .json(new ApiResponse(
+            200, 
+            user, 
+            "User updation successful."
+        ));
 
-    const updatesField = {};
-    if(req.body.fullName) updatesField.fullName = req.body.fullName;
-    if(req.body.location) updatesField.location = req.body.location;
-    if(req.body.role) updatesField.role = req.body.role;    
-
-    const user = await User.findByIdAndUpdate(
-        req.user?._id,
-        { $set: updatesField },
-        { new: true }
-    ).select("-password");
-
-    if(!user) throw new ApiError(500, "User updation failed!!!");
-
-    return res.status(200).json(new ApiResponse(
-        200,
-        user,
-        "User updation successful."
-    ));
+    } catch (error) {
+        throw new ApiError(400, error.message);
+    }
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
     try {
         const isAuthorised = req.user;
-        if(!isAuthorised) throw new ApiError(400, "Unauthorised request!!!");
+        if (!isAuthorised) throw new ApiError(400, "Unauthorised request!!!");
 
         const newAvatarLocalPath = req.file?.path || "";
-        if(!newAvatarLocalPath) throw new ApiError(400, "Avatar file required!!!");
-    
-        const oldUser = await User.findById(req.user._id);
-        if(!oldUser) throw new ApiError(400, "User does not exists!!!");
-    
-        const newAvatar = await uploadOnCloudinary(newAvatarLocalPath);
-        if(!newAvatar) throw new ApiError(500, "Facing error while uploading the avatar file!!!");
-    
-        const oldAvatarDeleted = await deleteFromCloudinary(oldUser.avatar.public_id);        
+        if (!newAvatarLocalPath)
+            throw new ApiError(400, "Avatar file required!!!");
 
-        if(!oldAvatarDeleted){
+        const newAvatar = await uploadOnCloudinary(newAvatarLocalPath);
+        if (!newAvatar)
+            throw new ApiError(
+                500,
+                "Facing error while uploading the avatar file!!!"
+            );
+
+        const isOldAvatarDeleted = await deleteFromCloudinary(
+            oldUser.avatar.public_id
+        );
+
+        if (!isOldAvatarDeleted) {
             await deleteFromCloudinary(newAvatar?.public_id);
-            throw new ApiError(500, "Facing defficulties while deleting the old file!!!");
+            throw new ApiError(
+                500,
+                "Facing defficulties while deleting the old file!!!"
+            );
         }
-    
+
         const modifiedNewAvatar = {
             url: newAvatar.url,
-            public_id: newAvatar.public_id
-        }
-    
+            public_id: newAvatar.public_id,
+        };
+
         const user = await User.findByIdAndUpdate(
             req.user._id,
             {
                 $set: {
-                    avatar: modifiedNewAvatar
-                }
+                    avatar: modifiedNewAvatar,
+                },
             },
             {
-                new: true
+                new: true,
             }
         );
-    
-        return res.status(200).json(new ApiResponse(
-            200,
-            user,
-            "User avatar updated Successfully."
-        ));
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(200, user, "User avatar updated Successfully.")
+            );
     } catch (error) {
         throw new ApiError(400, error.message || "update avatar error!!!");
     }
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
-    
     const isAuthorised = req?.user;
-    if(!isAuthorised) throw new ApiError(400, "Unauthorised Access!!! OR User not login!!!");
+    if (!isAuthorised)
+        throw new ApiError(400, "Unauthorised Access!!! OR User not login!!!");
 
     // const user = await User.findById(req.user._id).select("-password");
 
     const user = await User.aggregate([
         {
             $match: {
-                _id: new mongoose.Types.ObjectId(req.user?._id)
-            }
+                _id: new mongoose.Types.ObjectId(req.user?._id),
+            },
         },
         {
             $lookup: {
                 from: "pets",
                 localField: "pet",
                 foreignField: "_id",
-                as: "allPets"
-            }
+                as: "allPets",
+            },
         },
         {
             $project: {
@@ -293,76 +358,77 @@ const getCurrentUser = asyncHandler(async (req, res) => {
                 createdAt: 1,
                 updatedAt: 1,
                 refreshToken: 1,
-                allPets: 1
-            }
-        }
-    ]);   
+                allPets: 1,
+            },
+        },
+    ]);
 
-    return res.status(200).json(new ApiResponse(
-        200,
-        user[0],
-        "User Details fetched Successful."
-    ));
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, user[0], "User Details fetched Successful.")
+        );
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-
-    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
-    if(!incomingRefreshToken) throw new ApiError(400, "Unauthorised request!!!");
+    const incomingRefreshToken =
+        req.cookies.refreshToken || req.body.refreshToken;
+    if (!incomingRefreshToken)
+        throw new ApiError(400, "Unauthorised request!!!");
 
     try {
-        const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
-        if(!decodedToken) throw new ApiError(400, "Invalid refresh Token!!!");
-    
+        const decodedToken = jwt.verify(
+            incomingRefreshToken,
+            process.env.REFRESH_TOKEN_SECRET
+        );
+        if (!decodedToken) throw new ApiError(400, "Invalid refresh Token!!!");
+
         const user = await User.findById(decodedToken?._id);
-    
-        if(user?.refreshToken !== incomingRefreshToken) throw new ApiError(400, "Refresh token invalid or used!!!");
-    
-        const { refreshToken, accessToken } = await generateAccessRefreshTokens(user?._id);
-    
+
+        if (user?.refreshToken !== incomingRefreshToken)
+            throw new ApiError(400, "Refresh token invalid or used!!!");
+
+        const { refreshToken, accessToken } = await generateAccessRefreshTokens(
+            user?._id
+        );
+
         const options = {
             httpOnly: true,
-            secure: true
-        }
-    
+            secure: true,
+        };
+
         const userToReturn = user?.toObject();
         delete userToReturn?.password;
         delete userToReturn?.refreshToken;
         Object.freeze(userToReturn);
-    
+
         return res
-        .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
-        .json(new ApiResponse(
-            200,
-            userToReturn,
-            "Access token refreshed."
-        ));
+            .status(200)
+            .cookie("accessToken", accessToken, options)
+            .cookie("refreshToken", refreshToken, options)
+            .json(
+                new ApiResponse(200, userToReturn, "Access token refreshed.")
+            );
     } catch (error) {
-        throw new ApiError(400, error?.message || "Invalid Access Token!!!")
+        throw new ApiError(400, error?.message || "Invalid Access Token!!!");
     }
 });
 
 const getFollowers = asyncHandler(async (req, res) => {
-
     const { userName } = req.params;
-    if(!userName) throw new ApiError(400, "userName not found!!!");
+    if (!userName) throw new ApiError(400, "userName not found!!!");
 
     const isAuthorised = req.user;
-    if(!isAuthorised) throw new ApiError(400, "Unauthorised request!!!");
+    if (!isAuthorised) throw new ApiError(400, "Unauthorised request!!!");
 
     const user = await User.aggregate([
         {
             $match: {
-                userName: userName.toLowerCase()
-            }
+                userName: userName.toLowerCase(),
+            },
         },
-        {
-            
-        }
-    ])
-
+        {},
+    ]);
 });
 
 const getFollowing = asyncHandler(async (req, res) => {});

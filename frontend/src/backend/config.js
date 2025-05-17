@@ -36,7 +36,7 @@ class Config{
             const res = await axios.post(`${url}/users/updateDetails`, formData, {
                 withCredentials: true,
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "multipart/form-data"
                 }
             });
             return res.data;

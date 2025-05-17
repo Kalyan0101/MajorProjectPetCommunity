@@ -20,67 +20,78 @@ const ProfilePage = () => {
 	const [isAddPet, setIsAddPet] = useState(false);
 
 	const dispatch = useDispatch();
-	
+
 
 	useEffect(() => {
 		if (user.status) {
 			setPetLists(user.userData.allPets);
 			setUserFormData(user.userData);
 			setLoading(false);
+
+			setUserFormData(prev => ({ ...prev, avatar: null }))
 		}
 	}, [user.status, user.userData]);
 
-	const editUserDetails = (e) => {
-		const { name, value } = e.target;
+	const handelInput = (e) => {
+		const { name, value, files } = e.target;
 
-		setUserFormData((prevState) => (
-			{
-				...prevState,
-				[name]: value
-			}
-		));
-	};	
+		if (name === 'avatar') {
+			setUserFormData(prev => (
+				{
+					...prev,
+					[name]: files[0]
+				}
+			));
+		} else {
+			setUserFormData((prevState) => (
+				{
+					...prevState,
+					[name]: value
+				}
+			));
+		}
+	};
 
 	const updateUserInfo = async (e) => {
 		e.preventDefault();
 
 		config.updateDetails(userformData)
-		.then(async (res) => {
-			if (res.success) {
-				const user = await authService.getCurrentUser();
-				dispatch(storeLogin(user.data));
-				successAlert(res.message);
-				setLoading(true);
-			}
-		})
-		.catch((err) => {
-			console.log(err);
-		})
-		.finally(() => {
-			setIsEditingUser(false)
-		});
+			.then(async (res) => {
+				if (res.success) {
+					const user = await authService.getCurrentUser();
+					dispatch(storeLogin(user.data));
+					successAlert(res.message);
+					setLoading(true);
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			})
+			.finally(() => {
+				setIsEditingUser(false)
+			});
 	}
 
-	const addNewPet  = (petFormData) => {
-		
+	const addNewPet = (petFormData) => {
+
 		setLoading(true);
 
 		Pet.registerPet(petFormData)
-		.then( async (res) => {
+			.then(async (res) => {
 
-			if (res.success) {
-				const user = await authService.getCurrentUser();
-				dispatch(storeLogin(user.data));
-				successAlert(res.message);
-			}
-		})
-		.catch((err) => {
-			console.error(err);
-		})
-		.finally(() => {
-			setLoading(false);
-		})
-		
+				if (res.success) {
+					const user = await authService.getCurrentUser();
+					dispatch(storeLogin(user.data));
+					successAlert(res.message);
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			})
+			.finally(() => {
+				setLoading(false);
+			})
+
 		addPetFormPopUp();
 	}
 
@@ -180,16 +191,16 @@ const ProfilePage = () => {
 						)
 					}
 				</div>
-			</div>			
+			</div>
 
 			{/* Post Feed */}
 			<div className="mt-8">
 				{/* <PostFeed userId={profile?.userId} /> */}
 			</div>
 
-{/* =================================================================================================================== */}
-{/* *************************************** Edit form ***************************************************************** */}
-{/* =================================================================================================================== */}
+			{/* =================================================================================================================== */}
+			{/* *************************************** Edit form ***************************************************************** */}
+			{/* =================================================================================================================== */}
 
 			{/* Edit User details */}
 			{isEditingUser && (
@@ -197,6 +208,19 @@ const ProfilePage = () => {
 					<div className="bg-white p-6 rounded-lg shadow-md w-96">
 						<h2 className="text-xl font-semibold mb-4">Edit User Details</h2>
 						<form onSubmit={updateUserInfo}>
+							<label className="flex flex-col items-start cursor-pointer">
+								{
+									!userformData.avatar &&
+									<div className="flex justify-center items-center bg-gray-100">
+										<img
+											src={user.userData.avatar?.url || null}
+											alt="Cute pet"
+											className="w-full max-w-md h-auto rounded-lg shadow-md object-cover"
+										/>
+									</div>
+								}
+								<input type="file" className="my-2" name='avatar' onChange={handelInput} />
+							</label>
 							{
 								Object.entries(userformData).map(([field, value], i) => {
 
@@ -218,7 +242,7 @@ const ProfilePage = () => {
 													type="text"
 													name={field}
 													value={value || ""}
-													onChange={editUserDetails}
+													onChange={handelInput}
 													className="inline w-2/3 mt-2 p-2 border rounded"
 													placeholder={field}
 												/>
@@ -234,7 +258,7 @@ const ProfilePage = () => {
 									id='role'
 									name="role"
 									value={userformData.role}
-									onChange={editUserDetails}
+									onChange={handelInput}
 									className="inline w-2/3 mt-2 p-2 border rounded"
 								>
 									<option value="" disabled>Select role</option>
@@ -243,13 +267,14 @@ const ProfilePage = () => {
 									<option value="Vet">Vet</option>
 								</select>
 							</div>
-							<div className="mt-4 flex justify-end gap-2">
+							<div className="mt-4 flex justify-start gap-2 flex-row-reverse">
 								<button
 									className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600"
 								>
-									Save
+									Update
 								</button>
 								<button
+									type='button'
 									onClick={() => setIsEditingUser(false)}
 									className="bg-gray-300 text-gray-700 px-4 py-1 rounded hover:bg-gray-400"
 								>
@@ -263,8 +288,8 @@ const ProfilePage = () => {
 
 			{/* add new Pet Details */}
 			{
-				isAddPet && <PetForm onSubmit={addNewPet } onClose={addPetFormPopUp} />
-			}			
+				isAddPet && <PetForm onSubmit={addNewPet} onClose={addPetFormPopUp} />
+			}
 		</div>
 	);
 };
