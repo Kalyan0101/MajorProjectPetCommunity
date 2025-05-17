@@ -11,13 +11,11 @@ import TrendingTopics from '../components/Home/TrendingTopics';
 import { useSelector } from 'react-redux';
 
 const Home = () => {
-  const [posts, setPosts] = useState([]);
   
   const user = useSelector(state => state.auth);
+  const posts = useSelector(state => state.posts)
 
-  const addPost = (newPost) => {
-    setPosts([newPost, ...posts]);
-  };
+
 
   return (
     <div>
@@ -33,8 +31,14 @@ const Home = () => {
             {/* Center Column */}
             <div className="col-span-2 space-y-4">
 
-              { user?.status && <CreatePost addPost={addPost} /> }
-              <Feed posts={posts} user={user} />
+              { user?.status && <CreatePost /> }
+              {
+                !posts.isEmpty 
+                ?
+                    ( posts.posts.map(post => <Feed key={post._id} post={post} />) )
+                : 
+                    "No post available yet..."
+              }
               <TrendingTopics />
             </div>
 

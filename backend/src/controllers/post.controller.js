@@ -14,7 +14,7 @@ const createPost = asyncHandler(async (req, res) => {
 
     try {
         const user = req.user;
-        const text = req.body?.description || "";
+        const text = req.body?.caption || "";
         const imgLocalPath = req?.file?.path || "";
 
         if(! (text && imgLocalPath) ) throw new ApiError(400, "both can not empty!!!");
@@ -201,7 +201,15 @@ const allPost = asyncHandler(async (req, res) =>{
                     from: "users",
                     localField: "owner",
                     foreignField: "_id",
-                    as: "owner"
+                    as: "owner",
+                    pipeline: [
+                        {
+                            $project: {
+                                fullName: 1,
+                                avatar: 1
+                            }
+                        }
+                    ]
                 }
             },
             {
@@ -213,6 +221,9 @@ const allPost = asyncHandler(async (req, res) =>{
                         $first: "$owner"
                     }
                 }
+            },
+            {
+                $sort: { createdAt: -1 } // -1 = descending, 1 = ascending
             }
         ])
 
@@ -225,7 +236,6 @@ const allPost = asyncHandler(async (req, res) =>{
     } catch (error) {
         throw new ApiError(400, error.message);
     }
-
 });
 
 const lovePost = asyncHandler(async (req, res) =>{    

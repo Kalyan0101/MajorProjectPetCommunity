@@ -1,6 +1,7 @@
 // components/Home/Feed.jsx
 import React, { useState, useEffect } from 'react';
 import { FaRegThumbsUp } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
 const dummyPosts = [
   {
@@ -156,12 +157,12 @@ const dummyPosts = [
   },
 ];
 
-const Feed = ({ posts, user }) => {
+const Feed = ({ post }) => {
   const [likes, setLikes] = useState([]);
 
-  useEffect(() => {
-    setLikes(dummyPosts.map((post) => post.likes || 0));
-  }, []);
+  const user = useSelector(state => state.auth)
+
+  const owner = post.owner;
 
   const handleLike = (index) => {
     const newLikes = [...likes];
@@ -171,40 +172,37 @@ const Feed = ({ posts, user }) => {
 
   return (
     <div className="space-y-6">
-      {dummyPosts.map((post, i) => (
-        <div key={post._id} className="bg-white p-4 rounded-xl shadow-md">
+        <div className="bg-white p-4 rounded-xl shadow-md">
           <div className="flex items-center mb-3">
             <img
-              src={post.avatar}
+              src={owner?.avatar?.url || null}
               alt="avatar"
               className="w-10 h-10 rounded-full mr-3"
             />
             <div>
-              <p className="font-semibold">{post.author}</p>
-              <p className="text-sm text-gray-500">{post.time}</p>
+              <p className="font-semibold">{owner.fullName}</p>
+              <p className="text-sm text-gray-500">{post.time} time </p>
             </div>
           </div>
-          <h4 className="text-lg font-semibold mb-1">{post.caption}</h4>
+          <h4 className="text-lg font-semibold mb-1">{post.text}</h4>
           <img
-            src={post.imageUrl}
+            src={post.image.url}
             alt="Post"
             className="w-full h-auto object-cover max-h-[400px] rounded-lg mb-2"
           />
-          <p className="text-gray-700 mb-3">{post.description}</p>
 
           <div className="flex items-center gap-2 text-sm">
             { user?.status &&
               <button
-              onClick={() => handleLike(i)}
+              onClick={() => handleLike()}
               className="flex items-center gap-1 text-blue-600 hover:underline"
               >
                 <FaRegThumbsUp /> Like
               </button>
             }
-            <span className="text-gray-600">{likes[i]} likes</span>
+            <span className="text-gray-600">{likes} likes</span>
           </div>
         </div>
-      ))}
     </div>
   );
 };

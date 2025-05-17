@@ -43,9 +43,15 @@ class Post{
         }
     };
 
-    async getAllPost(){
+    async getAllPost(id = ''){
         try {
-            const res = await axios.post(`${url}/post/allPost`, {
+
+            let userId = '';
+            if(id){
+                userId = `?userId=${id}`
+            }
+
+            const res = await axios.get(`${url}/post/allPost${userId}`, {
                 withCredentials: true,
             })
             return res.data;

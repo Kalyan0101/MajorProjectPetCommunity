@@ -14,7 +14,7 @@ const router = Router();
 
 router.use(verifyJWT);
 
-router.route("/allPost").get(allPost); // NOTE: accept optional url parameter ( ?userId = ... )
+router.route("/allPost").get(allPost); // NOTE: accept optional url parameter ( ?userId=... )
 router.route("/createPost").post(upload.single("image"), createPost);
 router.route("/deletePost/:postId").get(deletePost);
 router.route("/updatePost/:postId").post(updatePost);
