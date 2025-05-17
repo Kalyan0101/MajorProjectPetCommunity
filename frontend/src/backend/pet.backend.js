@@ -42,20 +42,9 @@ class Pet {
     try {
       const res = await axios.post(`${url}/pet/updateDetails`, formData, {
         withCredentials: true,
-      });
-      return res.data;
-    } catch (error) {
-      throw error.response.data;
-    }
-  }
-
-  async updatePetAvatar(formData) {
-    try {
-      const res = await axios.post(`${url}/pet/updateAvatar`, formData, {
-        withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
-        },
+        }
       });
       return res.data;
     } catch (error) {

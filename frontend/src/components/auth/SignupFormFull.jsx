@@ -41,7 +41,7 @@ const SignupFormFull = () => {
             petAvatar,
             pet: {
                 name: petName,
-                type: petType,
+                animalType: petType,
                 breed,
                 yob,
                 activity,
