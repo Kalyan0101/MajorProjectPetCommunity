@@ -4,20 +4,19 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
-import { Love } from "../models/love.model.js";
 import { Comment } from "../models/comment.model.js";
 
 
-const createPost = asyncHandler(async (req, res) => {    
-    
-    if(!req.user) throw new ApiError(401, "Unauthorised Access!!!");
+const createPost = asyncHandler(async (req, res) => {
+
+    if (!req.user) throw new ApiError(401, "Unauthorised Access!!!");
 
     try {
         const user = req.user;
         const text = req.body?.caption || "";
         const imgLocalPath = req?.file?.path || "";
 
-        if(! (text && imgLocalPath) ) throw new ApiError(400, "both can not empty!!!");
+        if (!(text && imgLocalPath)) throw new ApiError(400, "both can not empty!!!");
 
         const image = await uploadOnCloudinary(imgLocalPath, "post")
 
@@ -33,7 +32,7 @@ const createPost = asyncHandler(async (req, res) => {
         return res
             .status(200)
             .json(new ApiResponse(
-                201, 
+                201,
                 post,
                 "New post has been created."
             ));
@@ -45,17 +44,17 @@ const createPost = asyncHandler(async (req, res) => {
 
 const deletePost = asyncHandler(async (req, res) => {
 
-    if(!req.user) throw new ApiError(401, "Unauthorised Access!!!");
+    if (!req.user) throw new ApiError(401, "Unauthorised Access!!!");
 
-    try {        
-        const { postId } = req.params;  
+    try {
+        const { postId } = req.params;
 
-        const post = await Post.findById( postId );
-        if(!post) throw new ApiError(400, "post does not exists!!!");
+        const post = await Post.findById(postId);
+        if (!post) throw new ApiError(400, "post does not exists!!!");
 
-        if(post.image.public_id){
+        if (post.image.public_id) {
             const isImageDeleted = await deleteFromCloudinary(post.image.public_id);
-            if(!isImageDeleted) throw new ApiError(500, "image not deleted!!!");
+            if (!isImageDeleted) throw new ApiError(500, "image not deleted!!!");
         }
 
         await Post.findOneAndDelete({ _id: post._id });
@@ -68,16 +67,16 @@ const deletePost = asyncHandler(async (req, res) => {
 });
 
 const updatePost = asyncHandler(async (req, res) => {
-    if(!req.user) throw new ApiError(401, "Unauthorised Access!!!");    
+    if (!req.user) throw new ApiError(401, "Unauthorised Access!!!");
 
-    try {        
+    try {
         const { postId } = req.params;
         const { text } = req?.body || "";
 
-        const post = await Post.findById( postId );
-        if(!post) throw new ApiError(400, "post not found!!!");
+        const post = await Post.findById(postId);
+        if (!post) throw new ApiError(400, "post not found!!!");
 
-        if(!text) throw new ApiError(400, "content not found!!!");
+        if (!text) throw new ApiError(400, "content not found!!!");
 
         post.text = text;
         const value = await post.save({ validateBeforeSave: false });
@@ -93,16 +92,13 @@ const updatePost = asyncHandler(async (req, res) => {
     }
 });
 
-const allPost = asyncHandler(async (req, res) =>{
-
-    if(!req.user) throw new ApiError(401, "Unauthorised Access!!!");
-    
+const allPost = asyncHandler(async (req, res) => {
     try {
         const { userId } = req.query;
 
         const matchCondition = {};
 
-        if(userId) {
+        if (userId) {
             matchCondition.owner = new mongoose.Types.ObjectId(userId)
         }
 
@@ -120,16 +116,13 @@ const allPost = asyncHandler(async (req, res) =>{
                         {
                             $lookup: {
                                 from: "users",
-                                localField: "loveBy",
+                                localField: "lovedBy",
                                 foreignField: "_id",
-                                as: "loveBy",
+                                as: "lovedBy",
                                 pipeline: [
                                     {
                                         $project: {
-                                            _id:1,
-                                            fullName: 1,
-                                            email: 1,
-                                            avatar: 1
+                                            _id: 1
                                         }
                                     }
                                 ]
@@ -137,65 +130,63 @@ const allPost = asyncHandler(async (req, res) =>{
                         },
                         {
                             $project: {
-                                _id: 1,
-                                loveBy: 1,
-                                createdAt: 1
+                                lovedBy: 1
                             }
                         },
                         {
                             $addFields: {
-                                loveBy: {
-                                    $first: "$loveBy"
+                                lovedBy: {
+                                    $first: "$lovedBy._id"
                                 }
                             }
                         }
                     ]
                 }
             },
-            {
-                $lookup: {
-                    from: "comments",
-                    localField: "_id",
-                    foreignField: "postId",
-                    as: "comments",
-                    pipeline: [
-                        {
-                            $lookup: {
-                                from: "users",
-                                localField: "commentBy",
-                                foreignField: "_id",
-                                as: "commentBy",
-                                pipeline: [
-                                    {
-                                        $project: {
-                                            _id:1,
-                                            fullName: 1,
-                                            email: 1,
-                                            avatar: 1
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            $project: {
-                                _id: 1,
-                                content: 1,
-                                commentBy: 1,
-                                createdAt: 1,
-                                updatedAt: 1
-                            }
-                        },
-                        {
-                            $addFields: {
-                                commentBy: {
-                                    $first: "$commentBy"
-                                }
-                            }
-                        }
-                    ]
-                }
-            },
+            // {
+            //     $lookup: {
+            //         from: "comments",
+            //         localField: "_id",
+            //         foreignField: "postId",
+            //         as: "comments",
+            //         pipeline: [
+            //             {
+            //                 $lookup: {
+            //                     from: "users",
+            //                     localField: "commentBy",
+            //                     foreignField: "_id",
+            //                     as: "commentBy",
+            //                     pipeline: [
+            //                         {
+            //                             $project: {
+            //                                 _id:1,
+            //                                 fullName: 1,
+            //                                 email: 1,
+            //                                 avatar: 1
+            //                             }
+            //                         }
+            //                     ]
+            //                 }
+            //             },
+            //             {
+            //                 $project: {
+            //                     _id: 1,
+            //                     content: 1,
+            //                     commentBy: 1,
+            //                     createdAt: 1,
+            //                     updatedAt: 1
+            //                 }
+            //             },
+            //             {
+            //                 $addFields: {
+            //                     commentBy: {
+            //                         $first: "$commentBy"
+            //                     }
+            //                 }
+            //             }
+            //         ]
+            //     }
+            // },
             {
                 $lookup: {
                     from: "users",
@@ -238,49 +229,17 @@ const allPost = asyncHandler(async (req, res) =>{
     }
 });
 
-const lovePost = asyncHandler(async (req, res) =>{    
+const commentPost = asyncHandler(async (req, res) => {
     try {
-        const user = req.user;
-        const { postId } = req.params;
-    
-        if( !(user && postId)) throw new ApiError(400, "postid and userid are must required!!!");
-    
-        const isPostValide = await Post.findOne({ _id: postId });
-        if(!isPostValide) throw new ApiError(400, "post not found!!!");
 
-        const existingLove = await Love.findOne({ postId, loveBy: user._id });
-        if(existingLove){
-            await Love.findByIdAndDelete({ _id: existingLove._id });
-            return res.status(200).json(new ApiResponse(200, {}, "love removed."));
-        }
-    
-        const love = await Love.create({
-            postId,
-            loveBy: user._id
-        });
-    
-        return res.status(200).json(new ApiResponse(
-            200, 
-            love, 
-            "love added."
-        ));
-
-    } catch (error) {
-        throw new ApiError(400, error.message);
-    }
-});
-
-const commentPost = asyncHandler(async (req, res) =>{
-    try {
-        
         const { postId } = req.params;
         const { content } = req.body;
         const user = req.user;
 
-        if(! (postId && content && user)) throw new ApiError(400, "postid, user and content all of these are required!!!");
+        if (!(postId && content && user)) throw new ApiError(400, "postid, user and content all of these are required!!!");
 
         const isPostValide = await Post.findOne({ _id: postId });
-        if(!isPostValide) throw new ApiError(400, "post not found!!!");
+        if (!isPostValide) throw new ApiError(400, "post not found!!!");
 
         const comment = await Comment.create({
             postId,
@@ -302,6 +261,5 @@ export {
     deletePost,
     updatePost,
     allPost,
-    lovePost,
     commentPost
 }

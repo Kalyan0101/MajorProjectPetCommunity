@@ -3,6 +3,7 @@ import NotificationsDropdown from '../Home/NotificationsDropdown';
 import SettingsModal from '../Home/SettingsModal';
 import { Link } from 'react-router-dom';
 import { MessagesPanel } from "../Home"
+import dogFootPrint from "../../assets/footprint.jpg"
 
 // Icons from lucide-react
 import { Bell, MessageSquare, Settings, Compass, Home, Search } from 'lucide-react';
@@ -32,7 +33,7 @@ const Navbar = () => {
     }
 
     return (
-        <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+        <nav style={{ backgroundImage: `url(${dogFootPrint})` }} className={`shadow-md px-6 py-4 flex justify-between items-center sticky top-0 left-1 z-50`}>
             {/* Left: Logo */}
             <div className="flex items-center gap-4">
                 <Link to="/" className="text-xl font-bold text-blue-600">
@@ -55,30 +56,30 @@ const Navbar = () => {
             </div>
 
             {/* Right: Icons */}
-            <div className="flex gap-6 items-center ml-6">
-                <Link to="/" className="hover:text-blue-500" title="Home">
+            <div className="flex gap-6 items-center">
+                <Link to="/" className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white" title="Home">
                     <Home className="w-6 h-6" />
                 </Link>
 
-                <Link to="/discover" className="hover:text-blue-500" title="Discover">
+                <Link to="/discover" className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white" title="Discover">
                     <Compass className="w-5 h-5" />
                 </Link>
 
                 { user.status &&
-                    <button onClick={toggleMessagesPanel} className="hover:text-blue-500" title="Messages">
+                    <button onClick={toggleMessagesPanel} className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white"title="Messages">
                         <MessageSquare className="w-5 h-5" />
                     </button>
                 }
 
                 { user.status &&
-                    <button onClick={openSettings} className="hover:text-blue-500" title="Settings">
+                    <button onClick={openSettings} className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white" title="Settings">
                         <Settings className="w-5 h-5" />
                     </button>
                 }
 
                 { user.status &&
                     <div className="relative">
-                        <button onClick={toggleNotifications} className="text-gray-700 hover:text-blue-500" title="Notifications">
+                        <button onClick={toggleNotifications} className="flex items-center justify-center p-2 rounded-[50%] bg-white hover:ring-2 ring-blue-400 transition duration-200" title="Notifications">
                             <Bell className="w-5 h-5" />
                         </button>
                         {showNotifications && <NotificationsDropdown />}
@@ -90,7 +91,7 @@ const Navbar = () => {
                         <img
                             src={ user.userData?.avatar?.url }
                             alt="profile"
-                            className="w-10 h-10 rounded-full object-cover object-center border border-gray-300 hover:ring-2 ring-blue-400 transition duration-200"
+                            className="w-10 h-10 rounded-full object-cover object-center border-2 border-blue-500 hover:ring-2 ring-blue-400 transition duration-200"
                         />
                     </Link>
                 }

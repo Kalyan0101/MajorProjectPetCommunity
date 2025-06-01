@@ -6,8 +6,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { SignupPrompt } from "../components/auth"
 import authService from '../backend/auth';
 import { logout as storeLogout, login as storeLogin } from '../store/authSlice.store.js';
-import { setPosts } from '../store/postsSlice.js';
-import Post from "../backend/post.backend.js";
 
 const AppRoutes = () => {
     const dispatch = useDispatch();
@@ -25,23 +23,11 @@ const AppRoutes = () => {
 
         })
         .catch((error) => { })
-        
-        Post.getAllPost()
-        .then((posts) => {
-
-            if(posts.success){
-                dispatch(setPosts(posts.data))
-            }
-        })
-        .catch(err => {
-            console.log(err);                    
-        });
-
-    }, [])
+    }, []);
 
     return (
         <>
-            <Header />
+            {/* <Header /> */}
             {!isLoggedin && <SignupPrompt />}
             <Navbar />
             <Outlet />

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const loveSchema = new mongoose.Schema({
 
-    loveBy: {
+    lovedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },

@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import Post from '../../backend/post.backend.js';
 import Loading from '../Loading.jsx';
 import { useDispatch } from 'react-redux';
-import { setPosts } from '../../store/postsSlice.js'
+import { setPosts } from '../../store/postsSlice.store.js'
 
 const CreatePost = () => {
 

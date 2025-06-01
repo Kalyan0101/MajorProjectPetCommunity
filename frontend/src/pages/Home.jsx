@@ -1,19 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../components/layout/Sidebar';
 import ProfileCard from '../components/Home/ProfileCard';
-import SettingsPanel from '../components/Home/SettingsPanel';
 import CreatePost from '../components/Home/CreatePost';
 import Feed from '../components/Home/Feed';
 import FriendList from '../components/layout/FriendList';
-import NotificationPanel from '../components/Home/NotificationPanel';
-import PetGallery from '../components/Home/PetGallery';
 import TrendingTopics from '../components/Home/TrendingTopics';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import Post from "../backend/post.backend.js";
+import { setPosts } from '../store/postsSlice.store.js';
 
 const Home = () => {
   
   const user = useSelector(state => state.auth);
   const posts = useSelector(state => state.posts)
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    Post.getAllPost()
+        .then((posts) => {
+
+            if(posts.success){
+                dispatch(setPosts(posts.data))
+            }
+        })
+        .catch(err => {
+            console.log(err);                    
+        });
+
+  }, [user.status, user.userData])
 
 
 
@@ -21,7 +35,7 @@ const Home = () => {
     <div>
       <div className="flex">
         <main className="flex-1 p-4 flex flex-col gap-4 relative">
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-4 gap-4 justify-between">
             {/* Left Column */}
             <div className="space-y-4 col-span-1">
               {/* <Sidebar /> */}
@@ -44,8 +58,7 @@ const Home = () => {
 
             {/* Right Column */}
             <div className="space-y-4 col-span-1">
-              <FriendList />
-              <NotificationPanel />
+              {/* <FriendList /> */}
             </div>
           </div>          
         </main>

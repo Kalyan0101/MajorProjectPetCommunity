@@ -51,18 +51,16 @@ class Post{
                 userId = `?userId=${id}`
             }
 
-            const res = await axios.get(`${url}/post/allPost${userId}`, {
-                withCredentials: true,
-            })
+            const res = await axios.get(`${url}/post/allPost${userId}`)
             return res.data;
         } catch (error) {
             throw error.response.data;
         }
     };
 
-    async lovePost(id){
+    async lovePost(postId){
         try {
-            const res = await axios.post(`${url}/post/love/${id}`, {
+            const res = await axios.get(`${url}/post/love/${postId}`, {
                 withCredentials: true,
             })
             return res.data;
