@@ -33,23 +33,23 @@ const SettingsModal = ({ isOpen, onClose }) => {
                 <p className="text-gray-600 mb-6">Manage your profile and pet information.</p>
 
                 <div className="space-y-4">
-                    <div 
+                    {/* <div 
                         className="border p-4 rounded hover:bg-gray-200 cursor-pointer hover:text-blue-600"
                         onClick={() => setProfileDialogOpen(true)}
                     >
                         <User2 className='w-5 inline-block mr-1 mb-2'/>
                         <h3 className="font-semibold inline-block">Profile Settings</h3>
                         <p className="text-sm text-gray-500">Edit your profile information.</p>
-                    </div>
+                    </div> */}
 
-                    <div 
+                    {/* <div 
                         className="border p-4 rounded hover:bg-gray-200 cursor-pointer hover:text-blue-600"
                         onClick={() => setPetDialogOpen(true)}
                     >
                         <PawPrint className='w-5 inline-block mr-1 mb-2' />
                         <h3 className="font-semibold inline-block">Pet Settings</h3>
                         <p className="text-sm text-gray-500">Update your pet's information.</p>
-                    </div>
+                    </div> */}
 
                     <div 
                         className="border p-4 rounded cursor-pointer hover:text-red-600 hover:bg-gray-200"

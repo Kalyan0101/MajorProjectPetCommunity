@@ -36,14 +36,14 @@ const Navbar = () => {
         <nav style={{ backgroundImage: `url(${dogFootPrint})` }} className={`shadow-md px-6 py-4 flex justify-between items-center sticky top-0 left-1 z-50`}>
             {/* Left: Logo */}
             <div className="flex items-center gap-4">
-                <Link to="/" className="text-xl font-bold text-blue-600">
+                <Link to="/" className="text-3xl font-extrabold text-blue-600">
                     PetCommunity
                 </Link>
             </div>
 
             {/* Center: Search Bar with Icon */}
             <div className="flex-1 flex justify-center">
-                <div className="relative w-80">
+                <div className="relative w-[40rem] left-16">
                     <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">
                         <Search className="w-4 h-4" />
                     </span>
@@ -56,14 +56,14 @@ const Navbar = () => {
             </div>
 
             {/* Right: Icons */}
-            <div className="flex gap-6 items-center">
+            <div className="flex gap-6 items-center px-5 py-2 bg-white">
                 <Link to="/" className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white" title="Home">
                     <Home className="w-6 h-6" />
                 </Link>
 
-                <Link to="/discover" className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white" title="Discover">
+                {/* <Link to="/discover" className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white" title="Discover">
                     <Compass className="w-5 h-5" />
-                </Link>
+                </Link> */}
 
                 { user.status &&
                     <button onClick={toggleMessagesPanel} className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white"title="Messages">
@@ -79,7 +79,7 @@ const Navbar = () => {
 
                 { user.status &&
                     <div className="relative">
-                        <button onClick={toggleNotifications} className="flex items-center justify-center p-2 rounded-[50%] bg-white hover:ring-2 ring-blue-400 transition duration-200" title="Notifications">
+                        <button onClick={toggleNotifications} className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white" title="Notifications">
                             <Bell className="w-5 h-5" />
                         </button>
                         {showNotifications && <NotificationsDropdown />}
