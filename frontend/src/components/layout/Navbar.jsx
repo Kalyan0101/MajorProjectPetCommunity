@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import NotificationsDropdown from '../Home/NotificationsDropdown';
 import SettingsModal from '../Home/SettingsModal';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { MessagesPanel } from "../Home"
 import dogFootPrint from "../../assets/footprint.jpg"
+import { useSelector } from 'react-redux';
 
 // Icons from lucide-react
-import { Bell, MessageSquare, Settings, Compass, Home, Search } from 'lucide-react';
-import { useSelector } from 'react-redux';
+import { Bell, MessageSquare, Home, Search } from 'lucide-react';
 
 const Navbar = () => {
     const [showNotifications, setShowNotifications] = useState(false);
@@ -15,6 +15,7 @@ const Navbar = () => {
     const [showMessages, setShowMessages] = useState(false)
 
     const user = useSelector(state => state.auth);
+    const urlLocation = useLocation()
 
     const toggleNotifications = () => {
         setShowNotifications(!showNotifications);
@@ -30,7 +31,7 @@ const Navbar = () => {
 
     const toggleMessagesPanel = () => {
         setShowMessages(pre => !pre)
-    }
+    }    
 
     return (
         <nav style={{ backgroundImage: `url(${dogFootPrint})` }} className={`shadow-md px-6 py-4 flex justify-between items-center sticky top-0 left-1 z-50`}>
@@ -43,7 +44,7 @@ const Navbar = () => {
 
             {/* Center: Search Bar with Icon */}
             <div className="flex-1 flex justify-center">
-                <div className="relative w-[40rem] left-16">
+                <div className="relative lg:w-[30rem] lg:left-10 xl:w-[40rem] left-16">
                     <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">
                         <Search className="w-4 h-4" />
                     </span>
@@ -57,23 +58,13 @@ const Navbar = () => {
 
             {/* Right: Icons */}
             <div className="flex gap-6 items-center px-5 py-2 bg-white">
-                <Link to="/" className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white" title="Home">
+                <Link to="/" className={`flex items-center justify-center p-2 border-2 border-blue-500 rounded-[50%] ${urlLocation.pathname === "/" ? "bg-blue-500 text-white" : "hover:bg-blue-500 hover:text-white"} `} title="Home">
                     <Home className="w-6 h-6" />
                 </Link>
-
-                {/* <Link to="/discover" className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white" title="Discover">
-                    <Compass className="w-5 h-5" />
-                </Link> */}
 
                 { user.status &&
                     <button onClick={toggleMessagesPanel} className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white"title="Messages">
                         <MessageSquare className="w-5 h-5" />
-                    </button>
-                }
-
-                { user.status &&
-                    <button onClick={openSettings} className="flex items-center justify-center p-2 bg-white border-2 border-blue-500 rounded-[50%] hover:bg-blue-500 hover:text-white" title="Settings">
-                        <Settings className="w-5 h-5" />
                     </button>
                 }
 
@@ -87,13 +78,16 @@ const Navbar = () => {
                 }
 
                 { user.status &&
-                    <Link to="/profile" title="Profile">
+                    <button 
+                        title="Profile"
+                        onClick={openSettings}
+                    >
                         <img
                             src={ user.userData?.avatar?.url }
                             alt="profile"
-                            className="w-10 h-10 rounded-full object-cover object-center border-2 border-blue-500 hover:ring-2 ring-blue-400 transition duration-200"
+                            className={`w-10 h-10 rounded-full object-cover object-center border-2 border-blue-500  ring-blue-400 transition duration-2001 ${urlLocation.pathname === "/profile" ? "scale-125" : "hover:ring-2"}`}
                         />
-                    </Link>
+                    </button>
                 }
             </div>
 

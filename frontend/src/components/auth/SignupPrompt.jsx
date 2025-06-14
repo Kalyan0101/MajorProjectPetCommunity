@@ -16,13 +16,6 @@ const SignupPrompt = () => {
           >
             Login
           </button>
-
-          <button 
-            className="bg-blue-500 px-5 py-2 rounded-lg text-white font-semibold"
-            onClick={() => navigate("/auth/signup")}
-          >
-            Sign up
-          </button>
         </div>
       </div>
     </div>

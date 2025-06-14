@@ -26,10 +26,9 @@ const Home = () => {
         .catch(err => {
             console.log(err);                    
         });
-
   }, [user.status, user.userData])
 
-
+  console.log(posts.posts)
 
   return (
     <div>

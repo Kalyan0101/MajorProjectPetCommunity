@@ -138,18 +138,18 @@ const ProfilePage = () => {
 
 	return (
 		<>
-			<div className="max-w-5xl mx-auto">
+			<div className=" mt-10 flex justify-center items-center flex-col mx-auto">
 				{/* Cover Banner */}
-				<div className="relative h-48 sm:h-64 bg-gradient-to-r from-blue-100 to-pink-100 rounded-b-lg overflow-hidden shadow-md">
+				{/* <div className="relative h-48 sm:h-64 bg-gradient-to-r from-blue-100 to-pink-100 rounded-b-lg overflow-hidden shadow-md">
 					<img
 						src={user?.coverImage}
 						alt="Cover"
 						className="object-cover w-full h-full"
 					/>
-				</div>
+				</div> */}
 
 				{/* Profile Section */}
-				<div className="relative px-6 mt-[-50px]">
+				<div className="px-6">
 					<div className="flex items-center gap-6">
 						{/* Profile Picture */}
 						<div className="w-28 h-28 sm:w-32 sm:h-32">
@@ -186,11 +186,6 @@ const ProfilePage = () => {
 					</div>
 				</div>
 
-				{/* Bio Section */}
-				{/* <div className="px-6 mt-6 text-gray-700">
-				<p>{user?.bio || "This is a pet lover who loves spending time with their furry friend!"}</p>
-			</div> */}
-
 				{/* Pet Carousel/Display Multiple Pets */}
 				<div className="bg-white rounded-lg shadow-md p-6 mt-6">
 					<div className="flex items-center justify-between mb-5">
@@ -216,17 +211,13 @@ const ProfilePage = () => {
 				</div>
 
 				{/* Post Feed */}
-				<div className="mt-8">
-					<div className="max-w-2xl mx-auto mt-6 px-4">
-						<h2 className="text-3xl font-bold mb-6">Your Feed</h2>
-						{
-							!posts.isEmpty
-								?
-								(posts.posts.map(post => <Feed key={post._id} post={post} />))
-								:
-								"Not post available yet..."
-						}
-					</div>
+				<div className="mt-2 w-[50rem]">
+					<h2 className="text-3xl font-bold mb-6">Your Feed</h2>
+					{
+						!posts.isEmpty
+						? (posts.posts.map(post => <Feed key={post._id} post={post} />))
+						: "Not post available yet..."
+					}
 				</div>
 
 				{/* =================================================================================================================== */}
