@@ -77,11 +77,14 @@ const deletePet = asyncHandler(async (req, res) => {
         if (!pet) throw new ApiError(400, "pet does not exists!!!");
 
         const isAvatarDelete = await deleteFromCloudinary(pet.avatar.public_id);
-        if (!isAvatarDelete)
-            throw new ApiError(
-                500,
-                `Something wrong about avatar file!!!, ${isAvatarDelete}`
-            );
+        
+        if (!isAvatarDelete) console.log(`Something wrong about avatar file!!!, ${isAvatarDelete}`);        
+
+        // if (!isAvatarDelete)
+        //     throw new ApiError(
+        //         500,
+        //         `Something wrong about avatar file!!!, ${isAvatarDelete}`
+        //     );
 
         const isPetDelete = await Pet.deleteOne({ _id: pet._id });
         if (!isPetDelete)

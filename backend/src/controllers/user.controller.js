@@ -32,28 +32,16 @@ const registerUser = asyncHandler(async (req, res) => {
             req.body;
 
         let userAvatarLocalPath = "";
-        if (
-            req.files &&
-            Array.isArray(req.files.userAvatar) &&
-            req.files.userAvatar.length > 0
-        ) {
+        if ( req.files && Array.isArray(req.files.userAvatar) && req.files.userAvatar.length > 0 ) {
             userAvatarLocalPath = req.files?.userAvatar[0].path;
         }
 
         let petAvatarLocalPath = "";
-        if (
-            req.files &&
-            Array.isArray(req.files.petAvatar) &&
-            req.files.petAvatar.length > 0
-        ) {
-            petAvatarLocalPath = req.files.petAvatar[0].path;
+        if ( req.files && Array.isArray(req.files.petAvatar) && req.files.petAvatar.length > 0 ) {
+            petAvatarLocalPath = req.files.petAvatar[0];
         }
 
-        if (
-            [userName, email, fullName, password, location].some(
-                (Field) => Field?.trim() === ""
-            )
-        )
+        if ( [userName, email, fullName, password, location].some( (Field) => Field?.trim() === "" ))
             throw new ApiError(400, "Error: All fields are required!!!");
 
         const existedUser = await User.findOne({ email });
@@ -65,10 +53,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
         const userAvatar = await uploadOnCloudinary(userAvatarLocalPath);
 
-        const pet = await createPet(
-            req.body.pet || req.body,
-            petAvatarLocalPath
-        );
+        const pet = await createPet( req.body.pet || req.body, petAvatarLocalPath );
 
         if (!pet) throw new ApiError(500, "Pet registration failed!!!");
 
